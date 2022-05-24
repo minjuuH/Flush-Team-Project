@@ -19,7 +19,7 @@ class creatWindow:
 
     def photoLabel(self, window, pos):
         #Img = PhotoImage(adress)
-        label=Label(master = window, text= '사진')
+        label=Label(master = window, text= '사진', width=30, height=20)
         label.pack(side=pos)
 
     def createEntry(self, window, size, pos, tpos,showText):
@@ -28,10 +28,17 @@ class creatWindow:
         input_text.pack(side = pos, padx=5, pady=10)
         Entry_title.pack(side=tpos) 
         
-    def createButton(self, window, pos, showText, cm=None):
+    def createEntryButton(self, window, pos, showText, cm=None):
         button = Button(window, text=showText, command=cm)
         button.pack(side=pos, padx=5, pady=10)
         #button.bind("<Button>", clickButton)
+
+    def createNormalButton(self, window, pos, showText) :
+        def clickButton(event) :
+            messagebox.showinfo(showText, '버튼이 실행되었습니다.')
+        nor_button = Button(window, text=showText)
+        nor_button.pack(side=pos, ipadx=20, ipady=20)
+        nor_button.bind("<Button>", clickButton)
 
     def createbookinfo(self, window) :
         col = ['','','','','']
@@ -60,8 +67,8 @@ def createNewWindow_book_s(title, window):
     Top_frame.pack(side=TOP, expand=True)  
     Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
     Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createButton(Top_frame, RIGHT, "도서 등록", cm=lambda:creaNewWindow_book_r('도서 등록', window))
-    new_win.createButton(Top_frame, RIGHT,  "대출", cm=lambda:creaNewWindow_book_info('도서 정보', window))
+    new_win.createEntryButton(Top_frame, RIGHT, "도서 등록", cm=lambda:creaNewWindow_book_r('도서 등록', window))
+    new_win.createEntryButton(Top_frame, RIGHT,  "대출", cm=lambda:creaNewWindow_book_info('도서 정보', window))
     new_win.createEntry(Top_frame, 40, RIGHT, RIGHT, "도서 조회")
     new_win.createbookinfo(Bottom_frame)
 
@@ -77,9 +84,10 @@ def creaNewWindow_book_r(title, window):
     Top_frame=Frame(label1)
     Top_frame.pack(side=TOP, fill="both")
     # 사진 선택 프레임
-    # pic = Label(Top_frame, text='사진 입력', bg='gray', width=20, height=10)
-    # pic.pack(anchor=NW, padx=20, pady=10)
-    new_win.createButton(Top_frame, LEFT, '사진 선택')
+    Top_lframe=Frame(Top_frame)
+    Top_lframe.pack(side=LEFT, fill='both')
+    new_win.photoLabel(Top_lframe, TOP)
+    new_win.createNormalButton(Top_lframe, TOP, '사진 선택')
     # 제목 프레임
     sor_frame1 = Frame(Top_frame)
     sor_frame1.pack(fill='both')
@@ -95,7 +103,7 @@ def creaNewWindow_book_r(title, window):
     # ISBN 프레임
     sor_frame4 =Frame(Top_frame)
     sor_frame4.pack(fill='both')
-    new_win.createButton(sor_frame4,  RIGHT, '중복확인')
+    new_win.createEntryButton(sor_frame4,  RIGHT, '중복확인', cm=lambda: clickButton('중복확인'))
     new_win.createEntry(sor_frame4, 26, RIGHT, RIGHT, 'ISBN  ')
     # 가격 프레임
     sor_frame5 = Frame(Top_frame)
@@ -114,9 +122,8 @@ def creaNewWindow_book_r(title, window):
     # 등록/취소 버튼
     Bottom_frame=Frame(label1)
     Bottom_frame.pack(side=BOTTOM)
-    # 등록 프레임
-    new_win.createButton(Bottom_frame, LEFT, '등록', cm=lambda: clickButton('등록'))
-    new_win.createButton(Bottom_frame, LEFT, '취소', cm=lambda: clickButton('취소'))
+    new_win.createNormalButton(Bottom_frame, LEFT, '등록')
+    new_win.createNormalButton(Bottom_frame, LEFT, '취소')
 
 # 도서 정보
 def creaNewWindow_book_info(title, window):
@@ -127,7 +134,7 @@ def creaNewWindow_book_info(title, window):
     label1.pack()
     
     # 정보입력
-    Top_frame=Frame(label1, relief='solid', bd=2)
+    Top_frame=Frame(label1)
     Top_frame.pack(side=TOP, fill="both")
     # 사진 선택 프레임
     new_win.photoLabel(Top_frame, LEFT)
@@ -147,19 +154,19 @@ def creaNewWindow_book_info(title, window):
     # 대출 프레임
     mo_frame = Frame(Bottom_bframe)
     mo_frame.pack(side=LEFT, fill='both')
-    new_win.createButton(mo_frame, BOTTOM, '대출', cm=lambda:rv.Rent_Screen(window))
+    new_win.createEntryButton(mo_frame, BOTTOM, '대출', cm=lambda:rv.Rent_Screen(window))
     # 수정 프레임
     re_frame = Frame(Bottom_bframe)
     re_frame.pack(side=LEFT, fil='both')
-    new_win.createButton(re_frame, BOTTOM, '수정', cm=lambda:creaNewWindow_book_info_re('도서 정보 수정', window))
+    new_win.createEntryButton(re_frame, BOTTOM, '수정', cm=lambda:creaNewWindow_book_info_re('도서 정보 수정', window))
     # 삭제 프레임
     del_frame = Frame(Bottom_bframe)
     del_frame.pack(side=LEFT, fil='both')
-    new_win.createButton(del_frame, BOTTOM, '삭제', cm=lambda: clickButton('삭제'))
+    new_win.createNormalButton(del_frame, BOTTOM, '삭제')
     # 닫기 프레임
     close_frame = Frame(Bottom_bframe)
     close_frame.pack(side=LEFT, fil='both')
-    new_win.createButton(close_frame, BOTTOM, '닫기', cm=lambda: clickButton('닫기'))
+    new_win.createNormalButton(close_frame, BOTTOM, '닫기')
 
 # 도서 정보 수정
 def creaNewWindow_book_info_re(title, window):
@@ -173,9 +180,10 @@ def creaNewWindow_book_info_re(title, window):
     Top_frame=Frame(label1)
     Top_frame.pack(side=TOP, fill="both")
     # 사진 선택 프레임
-    Img_frame = Frame(Top_frame)
-    Img_frame.pack(expand=1,side=BOTTOM, fill='both')
-    new_win.createButton(Top_frame, LEFT, '사진 선택', cm=lambda: clickButton('사진 선택'))
+    Top_lframe=Frame(Top_frame)
+    Top_lframe.pack(side=LEFT, fill='both')
+    new_win.photoLabel(Top_lframe, TOP)
+    new_win.createNormalButton(Top_lframe, TOP, '사진 선택')
     # 제목 프레임
     sor_frame1 = Frame(Top_frame)
     sor_frame1.pack(fill='both')
@@ -191,7 +199,7 @@ def creaNewWindow_book_info_re(title, window):
     # ISBN 프레임
     sor_frame4 =Frame(Top_frame)
     sor_frame4.pack(fill='both')
-    new_win.createButton(sor_frame4,  RIGHT, '중복확인', cm=lambda: clickButton('중복확인'))
+    new_win.createEntryButton(sor_frame4,  RIGHT, '중복확인', cm=lambda: clickButton('중복확인'))
     new_win.createEntry(sor_frame4, 26, RIGHT, RIGHT, 'ISBN  ')
     # 가격 프레임
     sor_frame5 = Frame(Top_frame)
@@ -215,19 +223,11 @@ def creaNewWindow_book_info_re(title, window):
     new_win.createEntry(sor_frame8, 30, RIGHT, RIGHT, '대출여부')
     # 도서 설명
     new_win.createEntry(Top_frame, 50, BOTTOM, LEFT, '도서 설명')
-    # 대출, 수정, 삭제, 닫기 버튼
+    # 완료,취소 버튼
     Bottom_frame=Frame(label1)
-    Bottom_frame.pack(side=BOTTOM, fill="both")
-    Bottom_bframe=Frame(Bottom_frame)
-    Bottom_bframe.pack(anchor=CENTER, fill='both')
-    # 대출 프레임
-    com_frame = Frame(Bottom_bframe)
-    com_frame.pack(side=LEFT, fill='both')
-    new_win.createButton(com_frame, BOTTOM, '완료', cm=lambda: clickButton('완료'))
-    # 수정 프레임
-    can_frame = Frame(Bottom_bframe)
-    can_frame.pack(side=LEFT, fil='both')
-    new_win.createButton(can_frame, BOTTOM, '취소', cm=lambda: clickButton('취소'))
+    Bottom_frame.pack(side=BOTTOM)
+    new_win.createNormalButton(Bottom_frame, LEFT, '완료')
+    new_win.createNormalButton(Bottom_frame, LEFT, '취소')
     
 
 # 도서수정
@@ -241,7 +241,7 @@ def createNewWindow_book_m(title, window):
     Top_frame.pack(side=TOP, expand=True)  
     Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
     Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createButton(Top_frame, RIGHT,  "수정", cm=lambda:creaNewWindow_book_info_re('도서 정보 수정', window))
+    new_win.createEntryButton(Top_frame, RIGHT,  "수정", cm=lambda:creaNewWindow_book_info_re('도서 정보 수정', window))
     new_win.createEntry(Top_frame, 40, RIGHT, RIGHT, "도서 수정")
     new_win.createbookinfo(Bottom_frame)
     
@@ -256,6 +256,6 @@ def createNewWindow_book_del(title, window):
     Top_frame.pack(side=TOP, expand=True)  
     Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
     Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createButton(Top_frame, RIGHT,  "삭제", cm=lambda: clickButton('삭제'))
+    new_win.createEntryButton(Top_frame, RIGHT,  "삭제", cm=lambda: clickButton('삭제'))
     new_win.createEntry(Top_frame, 40,  RIGHT, RIGHT,"도서 삭제")
     new_win.createbookinfo(Bottom_frame)
