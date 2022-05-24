@@ -111,6 +111,9 @@ def User_Choice(window):
     listFrame = Frame(new_win, relief="solid", height=50, bd=1, bg="white")
     listFrame.pack(fill=BOTH, expand=True)
 
+    labelBar = Label(listFrame, bg="white", relief='ridge', text="\t이름\t생년월일\t전화번호", font=('돋움', 13), anchor=W)
+    labelBar.pack(fill=BOTH)
+
 #도서 선택창
 def Book_Choice(window):
     new_win = create_Window(window, "도서 선택", "800x600")
