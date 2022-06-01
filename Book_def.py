@@ -1,8 +1,8 @@
+from re import T
 from tkinter import *
 from tkinter import messagebox
-from tkinter import ttk
-import menubar as mb
 import Rent_View as rv
+import UI_Class as UC
 
 class creatWindow:
     def __init__(self, title, window):
@@ -57,73 +57,38 @@ def clickButton(showText) :
     messagebox.showinfo(showText, "버튼이 실행되었습니다.")
 
 # 도서조회
-def createNewWindow_book_s(title, window):
-    new_win = creatWindow(title, window)
-    WD = new_win.reSelf()
-    mb.MenuBar(WD)
-    label1 = new_win.createLabel(80, 20)
-    label1.pack()
-    Top_frame = Frame(label1)              #  프레임으로 영역 나누기 - 상단
-    Top_frame.pack(side=TOP, expand=True)  
-    Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
-    Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createEntryButton(Top_frame, RIGHT, "도서 등록", cm=lambda:creaNewWindow_book_r('도서 등록', window))
-    new_win.createEntryButton(Top_frame, RIGHT,  "대출", cm=lambda:creaNewWindow_book_info('도서 정보', window))
-    new_win.createEntry(Top_frame, 40, RIGHT, RIGHT, "도서 조회")
-    new_win.createbookinfo(Bottom_frame)
+def createNewWindow_book_s(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 조회')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 조회')
+
+    new_win.Search_bar()
+    new_win.createButton('등록', new_win.baseLabel)
+    new_win.createButton('대출', new_win.baseLabel)
+    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t대출여부     ")
+
 
 # 도서 등록
-def creaNewWindow_book_r(title, window):
-    new_win = creatWindow(title,window)
-    WD = new_win.reSelf()
-    mb.MenuBar(WD)
-    label1 = new_win.createLabel(80, 20)
-    label1.pack()
-    
-    # 정보입력
-    Top_frame=Frame(label1)
-    Top_frame.pack(side=TOP, fill="both")
-    # 사진 선택 프레임
-    Top_lframe=Frame(Top_frame)
-    Top_lframe.pack(side=LEFT, fill='both')
-    new_win.photoLabel(Top_lframe, TOP)
-    new_win.createNormalButton(Top_lframe, TOP, '사진 선택')
-    # 제목 프레임
-    sor_frame1 = Frame(Top_frame)
-    sor_frame1.pack(fill='both')
-    new_win.createEntry(sor_frame1, 30, RIGHT, RIGHT, '제목   ')
-    # 저자 프레임
-    sor_frame2 = Frame(Top_frame)
-    sor_frame2.pack(fill='both')
-    new_win.createEntry(sor_frame2, 30, RIGHT, RIGHT, '저자   ')
-    # 출판사 프레임
-    sor_frame3 = Frame(Top_frame)
-    sor_frame3.pack(fill='both')
-    new_win.createEntry(sor_frame3, 30, RIGHT, RIGHT, '출판사')
-    # ISBN 프레임
-    sor_frame4 =Frame(Top_frame)
-    sor_frame4.pack(fill='both')
-    new_win.createEntryButton(sor_frame4,  RIGHT, '중복확인', cm=lambda: clickButton('중복확인'))
-    new_win.createEntry(sor_frame4, 26, RIGHT, RIGHT, 'ISBN  ')
-    # 가격 프레임
-    sor_frame5 = Frame(Top_frame)
-    sor_frame5.pack(fill='both')
-    new_win.createEntry(sor_frame5, 30, RIGHT, RIGHT, '가격   ')
-    # 저자 프레임
-    sor_frame5 = Frame(Top_frame)
-    sor_frame5.pack(fill='both')
-    new_win.createEntry(sor_frame5, 30, RIGHT, RIGHT, '저자   ')
-    # 분류 프레임
-    sor_frame6 = Frame(Top_frame)
-    sor_frame6.pack(fill='both')
-    new_win.createEntry(sor_frame6, 30, RIGHT, RIGHT, '분류   ')
-    # 도서 설명
-    new_win.createEntry(Top_frame, 50, BOTTOM, LEFT, '도서 설명')
-    # 등록/취소 버튼
-    Bottom_frame=Frame(label1)
-    Bottom_frame.pack(side=BOTTOM)
-    new_win.createNormalButton(Bottom_frame, LEFT, '등록')
-    new_win.createNormalButton(Bottom_frame, LEFT, '취소')
+def createNewWindow_book_r(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 등록')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 등록')
+
+    new_win.input_set('도서 등록')
+    new_win.entry_set('제목', 1)
+    new_win.entry_set('저자', 2)
+    new_win.entry_set('출판사', 3)
+    new_win.entry_set('ISBN', 4, True)
+    new_win.entry_set('가격', 6)
+    new_win.entry_set('관련링크', 7)
+    new_win.book_ex()
+    new_win.under_button('등록', new_win.base_frame)
 
 # 도서 정보
 def creaNewWindow_book_info(title, window):
@@ -169,93 +134,46 @@ def creaNewWindow_book_info(title, window):
     new_win.createNormalButton(close_frame, BOTTOM, '닫기')
 
 # 도서 정보 수정
-def creaNewWindow_book_info_re(title, window):
-    new_win = creatWindow(title, window)
-    WD = new_win.reSelf()
-    mb.MenuBar(WD)
-    label1 = new_win.createLabel(80, 20)
-    label1.pack()
-    
-    # 정보입력
-    Top_frame=Frame(label1)
-    Top_frame.pack(side=TOP, fill="both")
-    # 사진 선택 프레임
-    Top_lframe=Frame(Top_frame)
-    Top_lframe.pack(side=LEFT, fill='both')
-    new_win.photoLabel(Top_lframe, TOP)
-    new_win.createNormalButton(Top_lframe, TOP, '사진 선택')
-    # 제목 프레임
-    sor_frame1 = Frame(Top_frame)
-    sor_frame1.pack(fill='both')
-    new_win.createEntry(sor_frame1, 30, RIGHT, RIGHT, '제목   ')
-    # 저자 프레임
-    sor_frame2 = Frame(Top_frame)
-    sor_frame2.pack(fill='both')
-    new_win.createEntry(sor_frame2, 30, RIGHT, RIGHT, '저자   ')
-    # 출판사 프레임
-    sor_frame3 = Frame(Top_frame)
-    sor_frame3.pack(fill='both')
-    new_win.createEntry(sor_frame3, 30, RIGHT, RIGHT, '출판사')
-    # ISBN 프레임
-    sor_frame4 =Frame(Top_frame)
-    sor_frame4.pack(fill='both')
-    new_win.createEntryButton(sor_frame4,  RIGHT, '중복확인', cm=lambda: clickButton('중복확인'))
-    new_win.createEntry(sor_frame4, 26, RIGHT, RIGHT, 'ISBN  ')
-    # 가격 프레임
-    sor_frame5 = Frame(Top_frame)
-    sor_frame5.pack(fill='both')
-    new_win.createEntry(sor_frame5, 30, RIGHT, RIGHT, '가격   ')
-    # 저자 프레임
-    sor_frame5 = Frame(Top_frame)
-    sor_frame5.pack(fill='both')
-    new_win.createEntry(sor_frame5, 30, RIGHT, RIGHT, '저자   ')
-    # 링크 프레임
-    sor_frame6 = Frame(Top_frame)
-    sor_frame6.pack(fill='both')
-    new_win.createEntry(sor_frame6, 30, RIGHT, RIGHT, '관련링크')
-    # 분류 프레임
-    sor_frame7 = Frame(Top_frame)
-    sor_frame7.pack
-    new_win.createEntry(sor_frame7, 30, RIGHT, RIGHT, '분류   ')
-    # 대출여부 프레임
-    sor_frame8 = Frame(Top_frame)
-    sor_frame8.pack(fill='both')
-    new_win.createEntry(sor_frame8, 30, RIGHT, RIGHT, '대출여부')
-    # 도서 설명
-    new_win.createEntry(Top_frame, 50, BOTTOM, LEFT, '도서 설명')
-    # 완료,취소 버튼
-    Bottom_frame=Frame(label1)
-    Bottom_frame.pack(side=BOTTOM)
-    new_win.createNormalButton(Bottom_frame, LEFT, '완료')
-    new_win.createNormalButton(Bottom_frame, LEFT, '취소')
+def creaNewWindow_book_info_re(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 수정')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 수정')
+
+    new_win.input_set('도서 수정')
+    new_win.entry_set('제목', 1)
+    new_win.entry_set('저자', 2)
+    new_win.entry_set('출판사', 3)
+    new_win.entry_set('ISBN', 4, True)
+    new_win.entry_set('가격', 6)
+    new_win.entry_set('관련링크', 7)
+    new_win.book_ex()
+    new_win.under_button('완료', new_win.base_frame)
     
 
-# 도서수정
-def createNewWindow_book_m(title, window):
-    new_win = creatWindow(title, window)
-    WD = new_win.reSelf()
-    mb.MenuBar(WD)
-    label1 = new_win.createLabel(80, 20)
-    label1.pack()
-    Top_frame = Frame(label1)                 #  프레임으로 영역 나누기 - 상단
-    Top_frame.pack(side=TOP, expand=True)  
-    Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
-    Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createEntryButton(Top_frame, RIGHT,  "수정", cm=lambda:creaNewWindow_book_info_re('도서 정보 수정', window))
-    new_win.createEntry(Top_frame, 40, RIGHT, RIGHT, "도서 수정")
-    new_win.createbookinfo(Bottom_frame)
+# 도서조회(수정)
+def createNewWindow_book_m(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 수정')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 수정')
+
+    new_win.Search_bar()
+    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", lambda:creaNewWindow_book_info_re(new_win, 1), False)
     
-# 도서 삭제
-def createNewWindow_book_del(title, window):
-    new_win = creatWindow(title, window)
-    WD = new_win.reSelf()
-    mb.MenuBar(WD)
-    label1 = new_win.createLabel(80, 20)
-    label1.pack()
-    Top_frame = Frame(label1)              #  프레임으로 영역 나누기 - 상단
-    Top_frame.pack(side=TOP, expand=True)  
-    Bottom_frame = Frame(label1)              # 프레임으로 영역 나누기 - 하단
-    Bottom_frame.pack(side=BOTTOM, expand=True)
-    new_win.createEntryButton(Top_frame, RIGHT,  "삭제", cm=lambda: clickButton('삭제'))
-    new_win.createEntry(Top_frame, 40,  RIGHT, RIGHT,"도서 삭제")
-    new_win.createbookinfo(Bottom_frame)
+# 도서조회(삭제)
+def createNewWindow_book_del(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 삭제')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 삭제')
+
+    new_win.Search_bar()
+    new_win.createButton('삭제', new_win.baseLabel)
+    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t대출여부     ")
