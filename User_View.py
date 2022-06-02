@@ -1,248 +1,120 @@
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
-import menubar as mb
-
-#창생성 클래스
-class windowtool:
-    def __init__(self, title, window): #새창 생성자
-        self.window = Toplevel(window)
-        self.window.title(title)
-        self.window.geometry("960x720")
-        self.window.resizable(width = False, height = False)
-        
-    def labeltool(self, inwindow, intext = None, inimage = None, color = None, x = 0, y = 0): #라벨 생성함수
-        label = Label(inwindow, text = intext, image = inimage, bg = color, width = x, height = y)
-        return label
-
-    def entrytool(self, inwindow): #검색창 생성함수
-        entry = Entry(inwindow, width = 40, font = ('돋움', 20))
-        return entry
-
-    def buttontool(self, inwindow, intext = None, x = 0, y = 0, incommand = None): #버튼 생성함수
-        button = Button(inwindow, text = intext, width = x, height = y, command = incommand)
-        return button
-
-    def ttktool(self, inwindow, columns, x = 170): #표생성 함수 tkinter의 ttk 클래스 요구
-        TTK = ttk.Treeview(inwindow, column = columns, displaycolumns = columns) #표 컬럼 설정
-        for i in range(5):
-            TTK.column(columns[i], width = x, anchor="center") #컬럼 상세 설정
-            TTK.heading(columns[i], text = columns[i], anchor = "center") #표 헤더 설정
-        TTK["show"] = "headings" #표 헤더만 표시하도록 만듬 
-        return TTK
-
-def ch_buttontool(name, varname, nomber, window): #체크버튼 생성함수
-    for i in range(nomber):
-        globals()['{}{}'.format(varname, i)] = IntVar()
-        globals()['{}{}'.format(name, i)] = Checkbutton(window, variable = eval(varname+str(i)))
-
-#상황별 기능을 가장한 메세지창
-def buttonevent():
-    messagebox.showinfo('실행', "버튼이 실행되었습니다.")
+import UI_Class as UC
     
 #회원 조회창
-def userwindow(window):
-    user = windowtool('회원 조회', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
-    
-    userentry = user.entrytool(Topframe)
-    addbutton = user.buttontool(Topframe, "회원 등록", incommand = lambda: userwindowadd(window))
-    serchbutton = user.buttontool(Topframe, "회원 선택", incommand =lambda: userwindowinfo(window))
-    userttk = user.ttktool(Bottomframe, usercolumn,182)
-    for i in range(len(userinfo)):
-        userttk.insert('', "end",text = i, values = userinfo[i], iid = i)
-        
-    userentry.pack(side = LEFT, padx = 5, pady = 10)
-    serchbutton.pack(side = LEFT, padx = 5, pady = 10)
-    addbutton.pack(side = LEFT, padx = 5, pady = 10)
-    userttk.pack(expand = 1, anchor = CENTER)
+def userwindow(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 조회')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 조회')
+
+    new_win.Search_bar()
+    new_win.User_list('확인', check_choice=False, quit_choice=True, command_def=lambda:userwindowinfo(new_win,1,Quser=1))#Quser=1로 받으면 탈퇴회원정보가 출력
 
 #회원 조회창(수정)
-def re_userwindow(window):
-    user = windowtool('회원 조회(수정)', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
-    
-    userentry = user.entrytool(Topframe)
-    re_button = user.buttontool(Topframe, "수정", incommand = lambda: userwindowmodi(window))
-    userttk = user.ttktool(Bottomframe, usercolumn,182)
-    for i in range(len(userinfo)):
-        userttk.insert('', "end",text = i, values = userinfo[i], iid = i)
-        
-    userentry.pack(side = LEFT, padx = 5, pady = 10)
-    re_button.pack(side = LEFT, padx = 5, pady = 10)
-    userttk.pack(expand = 1, anchor = CENTER)
+def re_userwindow(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 수정')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 수정')
+
+    new_win.Search_bar()
+    new_win.User_list('수정', check_choice=False, command_def=lambda:userwindowmodi(new_win, 1))
 
 #회원 조회창(탈퇴)
-def del_userwindow(window):
-    user = windowtool('회원 조회(탈퇴)', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
-    
-    userentry = user.entrytool(Topframe)
-    del_button = user.buttontool(Topframe, "탈퇴", incommand = buttonevent)
-    userttk = user.ttktool(Bottomframe, usercolumn,182)
-    for i in range(len(userinfo)):
-        userttk.insert('', "end",text = i, values = userinfo[i], iid = i)
-        
-    userentry.pack(side = LEFT, padx = 5, pady = 10)
-    del_button.pack(side = LEFT, padx = 5, pady = 10)
-    userttk.pack(expand = 1, anchor = CENTER)
+def del_userwindow(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 탈퇴')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 탈퇴')
+
+    new_win.Search_bar()
+    new_win.createButton('탈퇴', new_win.baseLabel)
+    new_win.User_list('탈퇴')
     
 #회원 상세정보창
-def userwindowinfo(window):
-    user = windowtool('회원 상세정보', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
-    buttonplace = user.labeltool(user.window)
-    buttonplace.pack(side = BOTTOM)
+def userwindowinfo(window, choice=None, Quser=False):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 정보')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 정보')
 
-    userimage = user.labeltool(Topframe, color = 'white', x = 20, y = 15)
-    userinfo = user.labeltool(Topframe, color = 'white', x = 100, y = 15)
-    rentinfo = user.labeltool(Bottomframe, color = 'gray', x = 120, y = 20)
-    modibutton = user.buttontool(buttonplace, '수정', incommand = lambda: userwindowmodi(window))
-    removebutton = user.buttontool(buttonplace, '탈퇴', incommand =lambda: userwindowremove(window))
-    exitbutton = user.buttontool(buttonplace, '닫기', incommand = buttonevent)
-
-    userimage.pack(side = LEFT, padx = 5, pady = 10)
-    userinfo.pack(side = LEFT, padx = 5, pady = 10)
-    rentinfo.pack(side = TOP, anchor = CENTER, expand = 1)
-    modibutton.pack(side = LEFT,  padx = 5, pady = 10)
-    removebutton.pack(side = LEFT, padx = 5, pady = 10)
-    exitbutton.pack(side = LEFT, padx = 5, pady = 10)
+    new_win.input_set('회원 정보', 0)
+    new_win.info_output('이름', 1)
+    new_win.info_output('생년월일', 2)
+    new_win.info_output('전화번호', 3)
+    new_win.info_output('성별', 4)
+    new_win.info_output('이메일', 5)
+    if Quser:
+        Q = Label(new_win.Base_Bottom, text='탈퇴회원입니다.', font=('돋움', 15), fg='red', bg='white')
+        Q.pack(pady=50)
+        new_win.under_button('복구', new_win.base_frame)
+    else:
+        new_win.user_rent()
+        new_win.under_button('탈퇴', new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:userwindowmodi(new_win, 1))
     
     
 #회원 수정
-def userwindowmodi(window):
-    user = windowtool('회원 수정', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
+def userwindowmodi(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 수정')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 수정')
 
-    userimage = user.labeltool(Topframe, color = 'white', x = 20, y = 15)
-    userinfo = user.labeltool(Topframe, color = 'white', x = 80, y = 15)
-    chooseimage = user.buttontool(Topframe, '사진 선택', incommand = buttonevent)
-    checksame = user.buttontool(Topframe, '중복확인', incommand = buttonevent)
-    Okbutton = user.buttontool(Bottomframe, '완료', incommand = buttonevent)
-    Nobutton = user.buttontool(Bottomframe, '취소', incommand = buttonevent)
-
-    userimage.pack(side = LEFT, padx = 5, pady = 10)
-    chooseimage.pack(side = LEFT, padx = 5, pady = 10)
-    userinfo.pack(side = LEFT, padx = 5, pady = 10)
-    checksame.pack(side = LEFT, padx = 5, pady = 10)
-    Okbutton.pack(side = LEFT, padx = 5, pady = 10)
-    Nobutton.pack(side = LEFT, padx = 5, pady = 10)
+    new_win.input_set('회원 수정')
+    new_win.entry_set('이름', 1, True)
+    new_win.entry_set('생년월일', 2, True)
+    new_win.entry_set('전화번호', 3, True, True)
+    new_win.user_gender('성별', 5, True)
+    new_win.entry_set('이메일', 6, True)
+    new_win.under_button('완료', new_win.base_frame, bt2_def=lambda:userwindowinfo(new_win,1))
 
 #회원 등록
-def userwindowadd(window):
-    user = windowtool('회원 등록', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
-    
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
+def userwindowadd(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '회원 등록')
+    else:
+        new_win=window
+        new_win.Change_Frame('회원 등록')
 
-    userimage = user.labeltool(Topframe, color = 'white', x = 20, y = 15)
-    userinfo = user.labeltool(Topframe, color = 'white', x = 80, y = 15)
-    chooseimage = user.buttontool(Topframe, '사진 선택', incommand = buttonevent)
-    checksame = user.buttontool(Topframe, '중복확인', incommand = buttonevent)
-    addbutton = user.buttontool(Bottomframe, '등록', incommand = buttonevent)
-    Nobutton = user.buttontool(Bottomframe, '취소', incommand = buttonevent)
-
-    userimage.pack(side = LEFT, padx = 5, pady = 10)
-    chooseimage.pack(side = LEFT, padx = 5, pady = 10)
-    userinfo.pack(side = LEFT, padx = 5, pady = 10)
-    checksame.pack(side = LEFT, padx = 5, pady = 10)
-    addbutton.pack(side = LEFT, padx = 5, pady = 10)
-    Nobutton.pack(side = LEFT, padx = 5, pady = 10)
+    new_win.input_set('회원 등록')
+    new_win.entry_set('이름', 1)
+    new_win.entry_set('생년월일', 2)
+    new_win.entry_set('전화번호', 3, ol=1)
+    new_win.user_gender('성별', 5)
+    new_win.entry_set('이메일', 6)
+    new_win.under_button('등록', new_win.base_frame, bt2_def=lambda:userwindowinfo(new_win,1))
     
 #회원 삭제 
-def userwindowremove(window):
-    user = windowtool('탈퇴 회원', window)
-    mb.MenuBar(user.window)
-    cast = user.labeltool(user.window)
-    cast.pack()
+# def userwindowremove(window):
+#     user = windowtool('탈퇴 회원', window)
+#     mb.MenuBar(user.window)
+#     cast = user.labeltool(user.window)
+#     cast.pack()
     
-    Topframe = Frame(cast)
-    Topframe.pack(side = TOP, expand=True)
-    Bottomframe = Frame(cast)
-    Bottomframe.pack(side = BOTTOM, expand=True)
+#     Topframe = Frame(cast)
+#     Topframe.pack(side = TOP, expand=True)
+#     Bottomframe = Frame(cast)
+#     Bottomframe.pack(side = BOTTOM, expand=True)
 
-    userimage = user.labeltool(Topframe, color = 'white', x = 20, y = 15)
-    userinfo = user.labeltool(Topframe, color = 'white', x = 100, y = 15)
-    backbutton = user.buttontool(Bottomframe, '복구', incommand = buttonevent)
-    Nobutton = user.buttontool(Bottomframe, '취소', incommand = buttonevent)
+#     userimage = user.labeltool(Topframe, color = 'white', x = 20, y = 15)
+#     userinfo = user.labeltool(Topframe, color = 'white', x = 100, y = 15)
+#     backbutton = user.buttontool(Bottomframe, '복구', incommand = buttonevent)
+#     Nobutton = user.buttontool(Bottomframe, '취소', incommand = buttonevent)
 
-    userimage.pack(side = LEFT, padx = 5, pady = 10)
-    userinfo.pack(side = LEFT, padx = 5, pady = 10)
-    backbutton.pack(side = LEFT,  padx = 5, pady = 10)
-    Nobutton.pack(side = LEFT, padx = 5, pady = 10)
-
-#회원 정보
-usercolumn = ['이름', '생년월일', '성별', '전화번호', '이메일주소']
-userinfo = [("ㅇㅇㅇ", "19xx-xx-xx", False, "010xxxxoooo", "xxx@xxx.xxx"),
-            ("ㅁㅁㅁ", "20xx-xx-xx", True, "010xxxxoooo", "xxx@xxx.xxx"),
-            ("ㅎㅎㅎ", "19xx-xx-xx", False, "010xxxxoooo", "xxx@xxx.xxx")]
-
-# window = Tk()
-# window.title("도서관리시스템")
-# window.geometry("960x770")
-# window.resizable(width = False, height = False)
-
-# menubar = Menu(window)
-# window.config(menu=menubar)
-
-# bookmenu=Menu(menubar, tearoff=0)
-# menubar.add_cascade(label="도서관리", menu=bookmenu)
-# bookmenu.add_command(label="도서등록")
-# bookmenu.add_command(label="도서조회")
-# bookmenu.add_command(label="도서수정")
-# bookmenu.add_command(label="도서삭제")
-
-# usermenu=Menu(menubar, tearoff=0)
-# menubar.add_cascade(label="회원관리", menu=usermenu)
-# usermenu.add_command(label="회원등록", command = userwindowadd)
-# usermenu.add_command(label="회원조회", command = userwindow)
-# usermenu.add_command(label="회원수정", command = userwindowmodi)
-# usermenu.add_command(label="회원삭제", command = userwindowremove)
-
-# rentmenu=Menu(menubar, tearoff=0)
-# menubar.add_cascade(label="대출", menu=rentmenu)
-# rentmenu.add_command(label="도서대출")
-# rentmenu.add_command(label="도서반납")
-
-# window.mainloop()
-# 6
+#     userimage.pack(side = LEFT, padx = 5, pady = 10)
+#     userinfo.pack(side = LEFT, padx = 5, pady = 10)
+#     backbutton.pack(side = LEFT,  padx = 5, pady = 10)
+#     Nobutton.pack(side = LEFT, padx = 5, pady = 10)
