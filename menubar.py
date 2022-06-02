@@ -17,10 +17,10 @@ def MenuBar(window, base_win=None):
 
     usermenu=Menu(menubar, tearoff=0)
     menubar.add_cascade(label="회원관리", menu=usermenu)
-    usermenu.add_command(label="회원등록", command =lambda: uv.userwindowadd(window))
-    usermenu.add_command(label="회원조회", command =lambda: uv.userwindow(window))
-    usermenu.add_command(label="회원수정", command =lambda: uv.re_userwindow(window))
-    usermenu.add_command(label="회원삭제", command =lambda: uv.del_userwindow(window))
+    usermenu.add_command(label="회원등록", command =lambda: uv.userwindowadd(base_win, 1))
+    usermenu.add_command(label="회원조회", command =lambda: uv.userwindow(base_win, 1))
+    usermenu.add_command(label="회원수정", command =lambda: uv.re_userwindow(base_win, 1))
+    usermenu.add_command(label="회원삭제", command =lambda: uv.del_userwindow(base_win, 1))
 
     rentmenu=Menu(menubar, tearoff=0)
     menubar.add_cascade(label="대출", menu=rentmenu)
