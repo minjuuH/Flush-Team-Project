@@ -59,13 +59,20 @@ class new_window:
         rentlabel.pack(fill=X)
 
     #최종 버튼(가운데 정렬)
-    def under_button(self, menu_text, base):
+    def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None):
+        #more=True일 경우 버튼 3개 출력 / 추가되는 버튼은 command 함수를 따로 받아서 처리(bt1_def)
         buttonBase = Label(base, height=50)
         buttonBase.pack(side=BOTTOM)
-        RentButton = Button(buttonBase, text=menu_text, font=('돋움', 20), bg='gray', fg='white', command=lambda:msg(menu_text))
-        CancelButton = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
-        RentButton.pack(side=LEFT, padx=5, pady=5)
-        CancelButton.pack(side=LEFT, padx=5, pady=5)
+        if more:
+            bt1 = Button(buttonBase, text=bt1_t, font=('돋움', 20), bg='gray', fg='white', command=bt1_def)
+            bt1.pack(side=LEFT, padx=5, pady=5)
+        if bt2_def==None:
+            bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=lambda:msg(bt2_t))
+        else:
+            bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=bt2_def)
+        bt3 = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
+        bt2.pack(side=LEFT, padx=5, pady=5)
+        bt3.pack(side=LEFT, padx=5, pady=5)
 
     #최종 버튼(오른쪽 정렬)[대출-회원/도서 선택]
     def under_button_R(self):
@@ -84,6 +91,7 @@ class new_window:
         listLabel2.pack(fill=BOTH, expand=True)
         booklist = Frame(listLabel2, relief="solid", height=450, bd=1)          #대여 목록을 출력할 자리 frame으로 지정
         booklist.pack(fill=BOTH, padx=5, pady=5)
+        self.check_list(booklist)
 
     #체크박스 리스트 형식으로 출력
     def check_list(self, frame, font_size=13):
@@ -109,13 +117,17 @@ class new_window:
         text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
 
-    #체크박스 없는 리스트
-    def Nocheck_list(self, frame, command_def, font_size=13):
+    #리스트를 출력해주는 함수[도서/회원]
+    def info_list(self, frame, bt_text, bt_def=None, font_size=13, choice=True):
+        #choice가 True일 경우 체크박스를 출력해줌
         sb = Scrollbar(frame)
         text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
         sb.config(command=text.yview)
         sb.pack(side=RIGHT, fill=Y)
         text.pack(side=TOP, fill=BOTH, expand=True)
+
+        def showinfo(num):
+            messagebox.showinfo('정보확인창', "도서정보입니다.")
 
         # if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
         #     text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
@@ -123,8 +135,11 @@ class new_window:
         #     text.window_create("end", window=lb)
         # else:             #출력할 데이터가 존재할 경우
         for i in range(30):
-            text.insert('end', '도서 정보')   
-            bt = Button(text, text="수정", font=('돋움', font_size-3), command=command_def)
+            if choice:
+                cb = Checkbutton(text, bg='white', font=('돋움', font_size))
+                text.window_create("end", window=cb)
+            text.insert('end', '정보')             #입력할 정보는 추후에 인자로 받아올 것
+            bt = Button(text, text=bt_text, font=('돋움', font_size-3), command=bt_def)
             text.window_create('end', window=bt)
             text.insert('end', '\n')
         # text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
@@ -151,56 +166,138 @@ class new_window:
         button.pack(side=LEFT, padx=2, pady=10)
 
     #도서 목록 출력[도서]
-    def Book_list(self, bar_text, command_def=None, choice=True):
+    def Book_list(self, bar_text, bt_text, command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
         label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
         label_bar.pack(fill=X)
         label = Label(self.base_frame, relief="ridge", height=37, bg='white')
         label.pack(fill=BOTH, expand=True)
-        if choice==True:
-            self.check_list(label, 15)
-        else:
-            self.Nocheck_list(label, command_def, 15)
+        self.info_list(label, bt_text, command_def, 15, choice)
 
-    #등록 화면 설정[도서/회원]
-    def input_set(self, t):
+    #회원 목록 출력[회원]
+    def User_list(self, bt_text, command_def=None, check_choice=True, quit_choice=False):
+        #check_choice:체크버튼 출력 여부를 지정 / quit_choice:탈퇴회원 출력 여부를 지정(탈퇴회원도 출력한다면, 체크버튼으로 탈퇴/일반 회원을 선택할 수 있게 함)
+        choiceBar = Label(self.base_frame, relief="ridge", bg='white')
+        choiceBar.pack(fill=X)
+
+        #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
+        def quitUser():
+            #경우에 따라 데이터를 추가하는 방삭이면 마지막 else 문은 필요 X
+            #당장 출력할 데이터를 지정해주는 것이 아닌, info_list구문에서 논리적인덱싱을 사용할 것이라면 마지막 else 문도 필요..?
+            if chk1.get()==0 and chk2.get()==0:
+                #출력할 데이터가 존재하지 X
+                messagebox.showinfo("선택X", "해당하는 회원이 없습니다.")
+            elif chk1.get()==0:
+                #출력할 데이터에 탈퇴 회원 추가(탈퇴일 필드가 채워져 있으면 탈퇴회원)
+                messagebox.showinfo("탈퇴", "탈퇴회원이 선택되었습니다.")
+            elif chk2.get()==0:
+                #출력할 데이터에 일반 회원 추가
+                messagebox.showinfo("일반", "일반회원이 선택되었습니다.")
+            else:
+                messagebox.showinfo("전체", "전체 회원(탈퇴 회원 포함)이 선택되었습니다.")
+
+        if quit_choice:
+            chk1=IntVar()
+            chk2=IntVar()
+            Check = Checkbutton(choiceBar, text="일반회원", font=('돋움', 13), variable=chk1, bg="white", command=quitUser)
+            QuitCheck = Checkbutton(choiceBar, text="탈퇴회원", font=('돋움', 13), variable=chk2, bg="white", command=quitUser)
+            Check.pack(side=RIGHT, pady=10)
+            QuitCheck.pack(side=RIGHT)
+        label = Label(self.base_frame, relief="ridge", height=37, bg='white')
+        label.pack(fill=BOTH, expand=True)
+        self.info_list(label, bt_text, command_def, 15, check_choice)
+
+    #등록/수정/정보 화면 설정[도서/회원]
+    def input_set(self, t, open=True):
         txt = Label(self.base_frame, text=t, font=('돋움', 20, 'bold'))
         txt.pack(anchor=NW, padx=10, pady=5)
         self.Base = Frame(self.base_frame, relief='solid', bg='white', bd=2)
         self.Base.pack(fill=BOTH, pady=10, expand=True)
-        pic_base = Label(self.Base, bg='white')
-        #pic_base.pack(anchor=NW, side=LEFT)
+        #위젯 배치에 편리성을 더하기 위해 상단부와 하단부를 나눠줌
+        self.Base_Top = Label(self.Base, bg='white', height=60)
+        self.Base_Top.pack(fill=X, side=TOP, anchor=N)
+        self.Base_Bottom = Frame(self.Base, bg='white', height=60)
+        self.Base_Bottom.pack(fill=X, side=TOP, anchor=N)
+
+        #사진 입력 부분
+        pic_base = Label(self.Base_Top, bg='white')
         pic_base.grid(row=0, column=0, rowspan=20)
         pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
         pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
         pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
-        pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
-        pic_bt.pack(fill=X, padx=30)
+        if open:
+            pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
+            pic_bt.pack(fill=X, padx=30)
         pic = Label(pic_frame, text='사진 등록', font=('돋움', 15))
         pic.pack(pady=90)
 
         #빈레이블로 사용하지 않을 부분 채워주기
-        x_label = Label(self.Base, height=1, bg='white')
+        x_label = Label(self.Base_Top, height=1, bg='white')
         x_label.grid(row=0, column=1)
 
     #입력칸 생성[도서/회원]
-    def entry_set(self, t, r, ol=False):
-        txt = Label(self.Base, text=t, font=('돋움', 15), bg='white')
+    def entry_set(self, t, r, re_choice=False, ol=False):
+        txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)     #sticky : 지정된 칸 크기가 위젯 크기보다 클 경우, 정렬 방식을 지정
-        entry = Entry(self.Base, width=55, font=('돋움', 13), relief='solid', bd=1)
-        entry.grid(row=r, column=2, padx=5, ipady=3)
+        entry = Entry(self.Base_Top, width=55, font=('돋움', 13), relief='solid', bd=1)
+        if re_choice:
+            entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
+        entry.grid(row=r, column=2, padx=5, ipady=3, columnspan=3)
         if ol==True:
-            overlap_bt = Button(self.Base, text='중복확인', font=('돋움', 13))
-            overlap_bt.grid(row=r, column=3)
-            check_overlap = Label(self.Base, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
-            check_overlap.grid(row=r+1, column=2, sticky=W)
+            overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13))
+            overlap_bt.grid(row=r, column=5)
+            check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
+            check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
+
+    #정보값 출력[도서/회원]
+    def info_output(self, t, r):
+        txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
+        txt.grid(row=r, column=1, sticky=W)
+        info = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white', width=55, anchor=W)
+        info.grid(row=r, column=2, padx=10, ipady=3, columnspan=3)
 
     #도서 설명 입력칸[도서]
-    def book_ex(self):
-        info_label = Label(self.Base, text='도서 설명', font=('돋움', 15), bg='white')
-        info_label.grid(row=20, column=0, sticky=W, padx=30, pady=20)
-        entry = Entry(self.Base, width=100, font=('돋움', 13), relief='solid', bd=1)
-        entry.grid(row=21, column=0, columnspan=4, sticky=W, padx=30, ipady=60)
+    def book_ex(self, re_choice=False, op_choice=False):
+        info_label = Label(self.Base_Bottom, text='도서 설명', font=('돋움', 15), bg='white')
+        info_label.pack(anchor=NW, padx=30, pady=10)
+        entry = Entry(self.Base_Bottom, width=100, font=('돋움', 13), relief='solid', bd=1)
+        if re_choice:
+            entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
+        if op_choice:
+            entry.config(state=DISABLED)
+        entry.pack(fill=X, padx=30, ipady=70)
 
+    #성별 지정 라디오버튼[회원]
+    def user_gender(self, t, r, re_choice=False):
+        #추후에 값을 전달하는 함수로 변경
+        def test():
+            if gender.get():
+                messagebox.showinfo("성별", "남성입니다.")
+            else:
+                messagebox.showinfo("성별", "여성입니다.")
+
+        txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
+        txt.grid(row=r, column=1, sticky=W)
+        gender = BooleanVar()
+        male = Radiobutton(self.Base_Top, text="남", font=('돋움', 15), bg='white', variable=gender, value=True, command=test)
+        female = Radiobutton(self.Base_Top, text="여", font=('돋움', 15), bg='white', variable=gender, value=False, command=test)
+
+        #수정 화면일 때, 회원의 기존 성별에 따라 체크상태를 지정
+        # if re_choice:
+        #     male.select()
+        #     female.select()
+
+        male.grid(row=r, column=2, sticky=W)
+        female.grid(row=r, column=3, sticky=W)
+
+    #회원 대여 도서 목록 출력[회원]
+    def user_rent(self):
+        rentlist = Label(self.Base, text="  \t대여 도서\t\t\t\t대여일\t반납예정일", font=('돋움', 15), anchor=NW)
+        rentlist.pack(fill=X)
+        listframe = Frame(self.Base, bg="white")
+        listframe.pack(fill=BOTH, expand=True)
+        listframe.propagate(0)      #프레임 크기 고정
+        self.info_list(listframe, '연장')
+        
 
 #메시지창 띄우는 이벤트
 def msg(showText, win=0):
