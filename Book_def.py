@@ -3,6 +3,11 @@ from tkinter import messagebox
 import Rent_View as rv
 import UI_Class as UC
 
+def search_info(win, t, bt_def=None, chk:bool=1):
+    search = win.input_text.get()   #기입창에 입력한 데이터 추출
+    search_data = ['검색 후', search]   #search로 데이터 프레임에서 추출한 데이터 저장(추후 수정)
+    win.info_list(t, bt_def, 15, chk, 1, search_data)
+
 # 도서조회
 def createNewWindow_book_s(window, choice=None):
     new_win = UC.new_window()
@@ -12,11 +17,35 @@ def createNewWindow_book_s(window, choice=None):
         new_win=window
         new_win.Change_Frame('도서 조회')
 
-    new_win.Search_bar()
-    new_win.createButton('등록', new_win.baseLabel)
-    new_win.createButton('대출', new_win.baseLabel)
+    new_win.Search_bar(S_def=lambda:search_info(new_win, '확인', lambda:creaNewWindow_book_info(new_win, 1)))
+    new_win.createButton('등록', new_win.baseLabel, lambda:createNewWindow_book_r(new_win, 1))
+    new_win.createButton('대출', new_win.baseLabel, lambda:rv.Rent_Screen(new_win, 1))
     new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t대출여부     ", '확인', lambda:creaNewWindow_book_info(new_win, 1))
 
+# 도서조회(수정)
+def createNewWindow_book_m(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 수정')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 수정')
+
+    new_win.Search_bar(S_def=lambda:search_info(new_win, '수정',lambda:creaNewWindow_book_info_re(new_win, 1), 0))
+    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", '수정', lambda:creaNewWindow_book_info_re(new_win, 1), False)
+    
+# 도서조회(삭제)
+def createNewWindow_book_del(window, choice=None):
+    new_win = UC.new_window()
+    if choice == None:
+        new_win.make_window(window, '도서 삭제')
+    else:
+        new_win=window
+        new_win.Change_Frame('도서 삭제')
+
+    new_win.Search_bar(S_def=lambda:search_info(new_win, '삭제'))
+    new_win.createButton('삭제', new_win.baseLabel)
+    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t대출여부     ", '삭제')
 
 # 도서 등록
 def createNewWindow_book_r(window, choice=None):
@@ -75,28 +104,3 @@ def creaNewWindow_book_info_re(window, choice=None):
     new_win.book_ex(1)
     new_win.under_button('완료', new_win.base_frame, bt2_def=lambda:creaNewWindow_book_info(new_win, 1))
     
-
-# 도서조회(수정)
-def createNewWindow_book_m(window, choice=None):
-    new_win = UC.new_window()
-    if choice == None:
-        new_win.make_window(window, '도서 수정')
-    else:
-        new_win=window
-        new_win.Change_Frame('도서 수정')
-
-    new_win.Search_bar()
-    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", '수정', lambda:creaNewWindow_book_info_re(new_win, 1), False)
-    
-# 도서조회(삭제)
-def createNewWindow_book_del(window, choice=None):
-    new_win = UC.new_window()
-    if choice == None:
-        new_win.make_window(window, '도서 삭제')
-    else:
-        new_win=window
-        new_win.Change_Frame('도서 삭제')
-
-    new_win.Search_bar()
-    new_win.createButton('삭제', new_win.baseLabel)
-    new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t대출여부     ", '삭제')
