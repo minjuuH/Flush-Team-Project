@@ -31,12 +31,13 @@ class new_window:
             self.newWindow.title(title)
 
     #검색바 설정
-    def Search_bar(self, font_size=20):
+    def Search_bar(self, font_size=20, S_def=None):
+        #S_def : 검색 클릭 시 조회 된 데이터를 출력해주는 함수
         self.baseLabel = Label(self.base_frame)
         self.baseLabel.pack()
-        input_text = Entry(self.baseLabel, width=40, font=('돋움', font_size+2))
-        input_text.pack(side=LEFT, padx=5, pady=5)
-        S_button = Button(self.baseLabel, text="검색", font=('돋움', font_size), bg='gray', fg='white', command=lambda:msg('검색'))
+        self.input_text = Entry(self.baseLabel, width=40, font=('돋움', font_size+2))
+        self.input_text.pack(side=LEFT, padx=5, pady=5)
+        S_button = Button(self.baseLabel, text="검색", font=('돋움', font_size), bg='gray', fg='white', command=S_def)
         S_button.pack(side=LEFT, padx=5, pady=5)
 
     #화면 구성을 위한 베이스 프레임[대출]
@@ -83,6 +84,40 @@ class new_window:
         RentButton = Button(buttonBase, text="확인", font=('돋움', 13), bg='gray', fg='white', command=lambda:msg('확인', self.newWindow))
         RentButton.pack(side=RIGHT, padx=5, pady=5)
 
+    def text_set(self, frame, font_size=13):
+        sb = Scrollbar(frame)
+        self.text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
+        sb.config(command=self.text.yview)
+        sb.pack(side=RIGHT, fill=Y)
+        self.text.pack(side=TOP, fill=BOTH, expand=True)
+
+    #리스트를 출력해주는 함수[도서/회원/대출-회원,도서선택]
+    def info_list(self, bt_text=None, bt_def=None, font_size=13, choice=True, text_del=False, list=[]):
+        #choice가 True일 경우 체크박스를 출력해줌 / text_del=True이면 텍스트 박스를 비워줌
+        if text_del:
+            self.text.config(state=NORMAL)  #텍스트 위젯을 비워주기 위해 위젯 상태를 변경가능한 상태로 설정
+            self.text.delete("1.0", "end")
+
+        cb_list = []        #체크박스 리스트(각 줄마다 다른 데이터를 반환 받기 위해)
+        chk_list = []       #체크박스를 클릭할 시 반환받는 값을 저장할 리스트
+
+        if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
+            self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
+            lb = Label(self.text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
+            self.text.window_create("end", window=lb)
+        else:             #출력할 데이터가 존재할 경우
+            for i in range(len(list)):
+                if choice:
+                    cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
+                    self.text.window_create("end", window=cb)
+                self.text.insert('end', "  "+list[i])             #입력할 정보는 추후에 인자로 받아올 것
+                if bt_text!=None:
+                    bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)
+                    self.text.window_create('end', window=bt)
+                self.text.insert('end', '\n')
+        self.text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
+    #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
+
     #선택한 회원의 대출 목록을 출력시켜주는 함수[대출]
     def rent_list(self):
         rentlist = Label(self.Base, bg="white", text="  대여 목록", font=('돋움', 15), anchor=NW)
@@ -91,78 +126,23 @@ class new_window:
         listLabel2.pack(fill=BOTH, expand=True)
         booklist = Frame(listLabel2, relief="solid", height=450, bd=1)          #대여 목록을 출력할 자리 frame으로 지정
         booklist.pack(fill=BOTH, padx=5, pady=5)
-        self.check_list(booklist)
+        self.text_set(booklist)
+        self.info_list()
 
-    #체크박스 리스트 형식으로 출력
-    def check_list(self, frame, font_size=13):
-        sb = Scrollbar(frame)
-        text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
-        sb.config(command=text.yview)
-        sb.pack(side=RIGHT, fill=Y)
-        text.pack(side=TOP, fill=BOTH, expand=True)
-
-        # if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
-        #     text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
-        #     lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', 13), bg='white', anchor=CENTER, width=90)
-        #     text.window_create("end", window=lb)
-        # else:             #출력할 데이터가 존재할 경우
-            # for i in range(30):
-            #     #cb = Checkbutton(text, text=list, font=('돋움', 13), bg='white')
-            #     cb = Checkbutton(text, bg='white', font=('돋움', font_size))
-            #     text.window_create("end", window=cb)
-            #     text.insert('end', '도서 정보\n')   
-        text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
-        lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
-        text.window_create("end", window=lb)
-        text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
-    #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
-
-    #리스트를 출력해주는 함수[도서/회원]
-    def info_list(self, frame, bt_text, bt_def=None, font_size=13, choice=True):
-        #choice가 True일 경우 체크박스를 출력해줌
-        sb = Scrollbar(frame)
-        text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
-        sb.config(command=text.yview)
-        sb.pack(side=RIGHT, fill=Y)
-        text.pack(side=TOP, fill=BOTH, expand=True)
-
-        def showinfo(num):
-            messagebox.showinfo('정보확인창', "도서정보입니다.")
-
-        # if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
-        #     text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-        #     lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
-        #     text.window_create("end", window=lb)
-        # else:             #출력할 데이터가 존재할 경우
-        for i in range(30):
-            if choice:
-                cb = Checkbutton(text, bg='white', font=('돋움', font_size))
-                text.window_create("end", window=cb)
-            text.insert('end', '정보')             #입력할 정보는 추후에 인자로 받아올 것
-            bt = Button(text, text=bt_text, font=('돋움', font_size-3), command=bt_def)
-            text.window_create('end', window=bt)
-            text.insert('end', '\n')
-        # text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-        # lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
-        # text.window_create("end", window=lb)
-        text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
-    #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
-
-    #회원, 도서 목록 리스트 출력
-    def list_print(self, bar_text, list):   #list:출력할 정보 리스트
+    #회원, 도서 목록 리스트 출력[대출]
+    def list_print(self, bar_text, list=[]):   #list:출력할 정보 리스트
         listFrame = Frame(self.base_frame, relief="solid", height=50, bd=1, bg="white")
         listFrame.pack(fill=BOTH, expand=True)
 
         labelBar = Label(listFrame, bg="white", relief='ridge', text=bar_text, font=('돋움', 13), anchor=W)
         labelBar.pack(fill=BOTH)
 
-        self.check_list(listFrame)
+        self.text_set(listFrame)
+        self.info_list(list=list)
 
     #버튼 생성[도서,회원]
-    def createButton(self, showText, window):   #window=self.baseLabel
-        def msg():
-            messagebox.showinfo(showText, showText+"이(가) 클릭되었습니다.")
-        button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=msg)
+    def createButton(self, showText, window, bt_def=None):   #window=self.baseLabel
+        button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=bt_def)
         button.pack(side=LEFT, padx=2, pady=10)
 
     #도서 목록 출력[도서]
@@ -171,10 +151,11 @@ class new_window:
         label_bar.pack(fill=X)
         label = Label(self.base_frame, relief="ridge", height=37, bg='white')
         label.pack(fill=BOTH, expand=True)
-        self.info_list(label, bt_text, command_def, 15, choice)
+        self.text_set(label, 15)
+        self.info_list(bt_text, command_def, 15, choice)
 
     #회원 목록 출력[회원]
-    def User_list(self, bt_text, command_def=None, check_choice=True, quit_choice=False):
+    def User_list(self, bt_text, command_def=None, check_choice=True, quit_choice=False, list=None, t_d=False):
         #check_choice:체크버튼 출력 여부를 지정 / quit_choice:탈퇴회원 출력 여부를 지정(탈퇴회원도 출력한다면, 체크버튼으로 탈퇴/일반 회원을 선택할 수 있게 함)
         choiceBar = Label(self.base_frame, relief="ridge", bg='white')
         choiceBar.pack(fill=X)
@@ -204,7 +185,8 @@ class new_window:
             QuitCheck.pack(side=RIGHT)
         label = Label(self.base_frame, relief="ridge", height=37, bg='white')
         label.pack(fill=BOTH, expand=True)
-        self.info_list(label, bt_text, command_def, 15, check_choice)
+        self.text_set(label, 15)
+        self.info_list(bt_text, command_def, 15, check_choice)
 
     #등록/수정/정보 화면 설정[도서/회원]
     def input_set(self, t, open=True):
@@ -296,7 +278,8 @@ class new_window:
         listframe = Frame(self.Base, bg="white")
         listframe.pack(fill=BOTH, expand=True)
         listframe.propagate(0)      #프레임 크기 고정
-        self.info_list(listframe, '연장')
+        self.text_set(listframe)
+        self.info_list('연장')
         
 
 #메시지창 띄우는 이벤트
