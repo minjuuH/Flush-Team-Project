@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import messagebox
+from numpy import NaN
 from pandas import *
 from datetime import date
+from numpy import *
 
 class user_dataframe:
     #파일 불러옴
@@ -10,22 +12,49 @@ class user_dataframe:
                                        'USER_IMAGE','USER_RENT_CNT', 'USER_QUIT_DATE', 'USER_RENT_ALW', 'USER_WARN'])
            
 
-    #회원 조회내지 회원선택시 사용할 목록출력 함수
-    def showsimple(self, inwindow):
+    #일반 회원 조회
+    def now_list(self):
         self.show = self.data[self.data['USER_QUIT_DATE'].isnull()]
+        intext = list()
         for i in range(len(self.show)):
-            intext = [self.show.iloc[i]['USER_NAME'], self.show.iloc[i]['USER_BIRTH'], '0'+self.show.iloc[i]['USER_PHONE']]
-            listlabel = Label(inwindow, text = intext[0]+'\t'+intext[1]+'\t'+intext[2])#해당 부분은 UI에 적용할 떄 목록UI형태에 맞추어 변형할 예정
-            listlabel.pack()
+            intext.append([self.show.iloc[i]['USER_NAME'], self.show.iloc[i]['USER_BIRTH'], '0'+self.show.iloc[i]['USER_PHONE'], '  '])
+        return intext
+            
     
     #탈퇴회원 조회
-    def showremoveduser(self, inwindow):
+    def re_list(self):
         self.show_re = self.data[self.data['USER_QUIT_DATE'].notnull()]
+        intext = list()
         for i in range(len(self.show_re)):
-            intext = [self.show_re.iloc[i]['USER_NAME'], self.show_re.iloc[i]['USER_BIRTH'], '0'+self.show_re.iloc[i]['USER_PHONE']]
-            listlabel = Label(inwindow, text = intext[0]+'\t'+intext[1]+'\t'+intext[2])#해당 부분은 UI에 적용할 떄 목록UI형태에 맞추어 변형할 예정
-            listlabel.pack()
-            
+            intext.append([self.show_re.iloc[i]['USER_NAME'], self.show_re.iloc[i]['USER_BIRTH'], '0'+self.show_re.iloc[i]['USER_PHONE'], '탈퇴'])
+        return intext
+    
+    #모든회원 조회
+    def all_list(self):
+        intext = list()
+        for i in range(len(self.data)):
+            if notna(self.data.iloc[i]['USER_QUIT_DATE']):
+                remove = "탈퇴"
+            else:
+                remove = '회원'
+            intext.append([self.data.iloc[i]['USER_NAME'], self.data.iloc[i]['USER_BIRTH'], '0'+self.data.iloc[i]['USER_PHONE'], remove])
+        return intext
+    
+    #검색을 통해 특정 회원만 목록에 표기
+    def searchdata(self, searchvalue):
+        if not((self.data['USER_PHONE'].str.contains(searchvalue)).any()) and not((self.data['USER_NAME'].str.contains(searchvalue)).any()):
+            errshow = messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
+        else:
+            self.sch_data = self.data.loc[self.data['USER_PHONE'].str.contains(searchvalue) | self.data['USER_NAME'].str.contains(searchvalue), ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_QUIT_DATE']]
+            intext = []
+            for i in range(len(self.sch_data)):
+                if notna(self.sch_data.iloc[i]['USER_QUIT_DATE']):
+                    remove = "탈퇴"
+                else:
+                    remove = '회원'
+                intext.append([self.sch_data.iloc[i]['USER_NAME'], self.sch_data.iloc[i]['USER_BIRTH'], '0'+self.sch_data.iloc[i]['USER_PHONE'], remove])
+            return intext
+                
     #회원 상세 정보(탈퇴회원, 회원 포함)      
     def userinfo(self, inwindow, phone):
         #showindex = self.data.index[self.data['USER_PHONE'].isin([phone])].tolist()
@@ -62,17 +91,7 @@ class user_dataframe:
                     label = Label(inwindow, text = showit[i])
                     label.pack()
     
-    #검색을 통해 특정 회원만 목록에 표기
-    def searchdata(self, searchvalue, inwindow):
-        if not((self.data['USER_PHONE'].str.contains(searchvalue)).any()) and not((self.data['USER_NAME'].str.contains(searchvalue)).any()):
-            errshow = messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
-        else:
-            #검색이 적용되어 필터링된 새로운 회원 데이터프레임
-            self.sch_data = self.data.loc[self.data['USER_PHONE'].str.contains(searchvalue) | self.data['USER_NAME'].str.contains(searchvalue), ['USER_NAME', 'USER_BIRTH', 'USER_PHONE']]
-            for i in range(len(self.sch_data)):
-                intext = [self.sch_data.iloc[i]['USER_NAME'], self.sch_data.iloc[i]['USER_BIRTH'], '0'+self.sch_data.iloc[i]['USER_PHONE']]
-                listlabel = Label(inwindow, text = intext[0]+'\t'+intext[1]+'\t'+intext[2]) #위의 조회와 마찬가지로 변형, 적용시킬 예정
-                listlabel.pack()
+    
                 
                 
     #회원목록에서 선택 수정할 경우의 함수 (수정할 회원의 USER_PHONE 값을 넘겨받아 진행)
@@ -142,12 +161,11 @@ class user_dataframe:
         
     #csv 불러오기        
     def readcsv(self):
-        self.data = read_csv('*/user.csv', dtype={"USER_PHONE": str, "USER_SEX": bool, 'USER_RENT_CNT' : int}, encoding='cp949')
+        self.data = read_csv('user.csv', dtype={"USER_PHONE": str, "USER_SEX": bool, 'USER_RENT_CNT' : int}, encoding='cp949')
         self.data.drop(['Unnamed: 0'], axis = 1, inplace = True)
         self.data['USER_QUIT_DATE'] = to_datetime(self.data['USER_QUIT_DATE'])
         self.data.sort_values('USER_NAME')
-        return self.data
     
     #CSV 저장
     def tocsv(self):
-        self.data.to_csv('*/user.csv', encoding='cp949')
+        self.data.to_csv('user.csv', encoding='cp949')
