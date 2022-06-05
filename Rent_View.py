@@ -60,3 +60,4 @@ def Book_Choice(window):
     new_win.under_button_R()
     #회원 목록이 출력될 프레임
     new_win.list_print("\t제목\t저자\t출판사\tISBN\t대출여부", "도서 정보")
+    
