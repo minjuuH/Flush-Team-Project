@@ -322,9 +322,10 @@ class new_window:
         pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
         pic.pack(fill= 'both', expand=True)
         if (showimage != '사진등록'):
-            picture = PhotoImage(file = showimage)
-            pic.configure(image=picture)
-            pic.image = picture
+            if(showimage != None):
+                picture = PhotoImage(file = showimage)
+                pic.configure(image=picture)
+                pic.image = picture
         if open:
             pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
             pic_bt.pack(fill=X, padx=30)

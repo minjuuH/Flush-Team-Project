@@ -122,7 +122,7 @@ class user_dataframe:
             sex  = list[3]
             mail = list[4]
             image = list[5]
-            if image == None:
+            if image == '':
                 image = '사진등록'
             modivalue = [name, birth, phonenum, sex, mail, image]
             column_name = ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_SEX', 'USER_MAIL', 'USER_IMAGE']
