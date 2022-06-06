@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import messagebox
-import menubar as mb
 
 class new_window:
     #생성자
@@ -9,26 +8,28 @@ class new_window:
         self.base_frame = None      #이후에 화면의 베이스가 되는 프레임 객체를 저장할 변수 지정
 
     #외부창 생성(외부창이 아닐 경우에 사용)
-    def make_window(self, base_win, title, geo="960x720"):
+    def make_window(self, base_win, title):
         self.newWindow = Toplevel(base_win)
         self.newWindow.title(title)
-        self.newWindow.geometry(geo)
+        self.newWindow.geometry("800x600")
         self.newWindow.resizable(width=False, height=False)
-        if geo=="960x720":
-            mb.MenuBar(self.newWindow, self)
         self.make_Frame()
 
     #창 화면의 베이스가 되는 프레임 객체 생성
-    def make_Frame(self):
-        self.base_frame = Frame(self.newWindow)
+    def make_Frame(self, parent=None):
+        if parent==None:
+            self.parent = self.newWindow
+        else:
+            self.parent = parent
+        self.base_frame = Frame(self.parent)
         self.base_frame.pack(fill=BOTH, expand=True)
 
     #창의 프레임 전환을 위한 함수(외부창일 경우에 사용)
-    def Change_Frame(self, title):
+    def Change_Frame(self, title=None):
         if self.base_frame != None:
             self.base_frame.destroy()
-            self.make_Frame()
-            self.newWindow.title(title)
+            #self.newWindow.title(title)
+        self.make_Frame()
 
     #검색바 설정
     def Search_bar(self, font_size=20, S_def=None):
@@ -60,7 +61,7 @@ class new_window:
         rentlabel.pack(fill=X)
 
     #최종 버튼(가운데 정렬)
-    def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None):
+    def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None, bt3_def=None):
         #more=True일 경우 버튼 3개 출력 / 추가되는 버튼은 command 함수를 따로 받아서 처리(bt1_def)
         buttonBase = Label(base, height=50)
         buttonBase.pack(side=BOTTOM)
@@ -71,7 +72,7 @@ class new_window:
             bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=lambda:msg(bt2_t))
         else:
             bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=bt2_def)
-        bt3 = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
+        bt3 = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=bt3_def)
         bt2.pack(side=LEFT, padx=5, pady=5)
         bt3.pack(side=LEFT, padx=5, pady=5)
 
@@ -89,7 +90,7 @@ class new_window:
         self.text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
         sb.config(command=self.text.yview)
         sb.pack(side=RIGHT, fill=Y)
-        self.text.pack(side=TOP, fill=BOTH, expand=True)
+        self.text.pack(side=TOP, fill=BOTH, expand=True, ipadx=2)
 
     #리스트를 출력해주는 함수[도서/회원/대출-회원,도서선택]
     def info_list(self, bt_text=None, bt_def=None, font_size=13, choice=True, text_del=False, list=[]):
@@ -217,13 +218,20 @@ class new_window:
         x_label.grid(row=0, column=1)
 
     #입력칸 생성[도서/회원]
-    def entry_set(self, t, r, re_choice=False, ol=False):
+    def entry_set(self, t, r, re_choice=False, ol=False, form=False):
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)     #sticky : 지정된 칸 크기가 위젯 크기보다 클 경우, 정렬 방식을 지정
         entry = Entry(self.Base_Top, width=55, font=('돋움', 13), relief='solid', bd=1)
         if re_choice:
             entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
         entry.grid(row=r, column=2, padx=5, ipady=3, columnspan=3)
+
+        #입력서식 표시
+        if form:
+            input_form = Label(self.Base_Top, text='ex) 0000-00-00', font=('돋움', 13), bg='white', fg='gray')
+            input_form.grid(row=r, column=5)
+
+        #중복 입력할 수 없는 데이터에 한해서 실행
         if ol==True:
             overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13))
             overlap_bt.grid(row=r, column=5)
@@ -283,7 +291,7 @@ class new_window:
         
 
 #메시지창 띄우는 이벤트
-def msg(showText, win=0):
+def msg(showText, win=None):
         messagebox.showinfo(showText, showText+"이(가) 클릭되었습니다.")
-        if win != 0:        #win의 인자를 전달받았을 경우(win이 0이 아닐 경우)
+        if win != None:        #win의 인자를 전달받았을 경우(win이 0이 아닐 경우)
             win.withdraw()  #withdraw():Toplevel의 메소드. Toplevel()로 생성한 외부창을 화면에서 제거해준다.
