@@ -3,7 +3,7 @@ from tkinter import messagebox
 from UI_Class import *
 import Book_def as Bd
 import User_View as uv
-#import Rent_Dataframe as RD
+import Rent_Dataframe as RD
 
 def search_info(win, choice=True):
     #choice->회원 정보에서 조회할 지, 도서 정보에서 조회할지 선택(True=회원, False=도서)
@@ -64,16 +64,17 @@ def Return_Screen(window, uc=None):
     #대여 목록 출력
     new_win.rent_list()
 
-# def Rent_info(rb, ru):
-#     data = RD.Rent_DF()
-#     data.read_csv()
+def Rent_info(rb, ru):
+    #rb:대출도서목록 / ru:대여인
+    data = RD.Rent_DF()
+    data.read_csv()
 
-#     data.Rent_Add(rb, ru)
-#     R_book = []
+    data.Rent_Add(rb, ru)
+    R_book = []
     
-#     for i in range(len(data.book)):
-#         if (data.book['BOOK_ISBN'][i]==data.add_rent['BOOK_ISBN']).any():
-#             R_book.append(data.book['BOOK_TITLE'][i])
+    for i in range(len(data.book)):
+        if (data.book['BOOK_ISBN'][i]==data.add_rent['BOOK_ISBN']).any():
+            R_book.append(data.book['BOOK_TITLE'][i])
 
 #회원 선택창
 def User_Choice(window):

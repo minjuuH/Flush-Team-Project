@@ -39,7 +39,7 @@ menubar.add_cascade(label="회원관리", menu=usermenu)
 usermenu.add_command(label="회원등록", command =lambda: uv.userwindowadd(window, uc=Base))
 usermenu.add_command(label="회원조회", command =lambda: uv.userwindow(window, uc=Base))
 usermenu.add_command(label="회원수정", command =lambda: uv.re_userwindow(window, uc=Base))
-usermenu.add_command(label="회원삭제", command =lambda: uv.del_userwindow(window, uc=Base))
+usermenu.add_command(label="회원탈퇴", command =lambda: uv.del_userwindow(window, uc=Base))
 
 rentmenu=Menu(menubar, tearoff=0)
 menubar.add_cascade(label="대출", menu=rentmenu)
