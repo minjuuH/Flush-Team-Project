@@ -101,7 +101,13 @@ class new_window:
 
         cb_list = []        #체크박스 리스트(각 줄마다 다른 데이터를 반환 받기 위해)
         chk_list = []       #체크박스를 클릭할 시 반환받는 값을 저장할 리스트
-        chk = IntVar()
+        choice_list = []
+
+        def chk_plus(list, i, choice_list):
+            if chk.get()==0:
+                if list[i] in choice_list:
+                else:
+                    choice_list.append(list[i])
 
         if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
             self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
@@ -110,6 +116,7 @@ class new_window:
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(list)):
                 if choice:
+                    chk = IntVar()
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=chk)
                     self.text.window_create("end", window=cb)
                 self.text.insert('end', "  "+list[i])             #입력할 정보는 추후에 인자로 받아올 것
