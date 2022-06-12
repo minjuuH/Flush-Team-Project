@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import User_dataframe as ud
 import User_View as uv
+import pandas as pd
 
 class new_window:
     #생성자
@@ -76,18 +77,36 @@ class new_window:
         self.Base.pack(fill=BOTH, pady=50, expand=True)
 
     #회원/도서 선택창[대출]
-    def Choice(self, button_text, h, CM):
+    def Choice(self, button_text, h, CM, user=True):
         listLabel = Label(self.Base, bg="white", height=50)
-        listLabel.pack(fill=X, expand=True)
-        userChoice = Button(listLabel, text=button_text, font=('돋움', 20), bg='gray', fg='white', command=lambda:CM(self.newWindow))
+        listLabel.pack(fill=X, expand=True, anchor=N)
+        userChoice = Button(listLabel, text=button_text, font=('돋움', 20), bg='gray', fg='white', command=CM)
         userChoice.pack(side=LEFT, padx=5, pady=5)
-        userlist = Frame(listLabel, relief="solid", height=h, bd=1) #회원 정보를 출력할 자리 frame으로 지정
-        userlist.pack(fill=X, padx=5, pady=5)
+        userlist = Frame(listLabel, relief="solid", height=h, bd=1, bg='white') #회원 정보를 출력할 자리 frame으로 지정
+        userlist.pack(fill=X, padx=5, pady=5, expand=True)
+        userlist.propagate(0)  #frame 크기를 고정시켜 줌
+        if user:
+            self.userinfo = Label(userlist, font=('돋움', 15), bg='white')
+            self.userinfo.pack(side=LEFT, ipadx=5)
+        else:
+            self.text_set(userlist)
+            self.text.configure(state=DISABLED)
+            # self.bookinfo = Label(userlist, font=('돋움', 15), bg='white', anchor=NW, justify=LEFT)
+            # self.bookinfo.pack(side=LEFT, ipadx=5, ipady=5, fill=BOTH, expand=True)
 
     #대출 정보 출력[대출]
     def rent_info(self):
-        rentlabel = Label(self.Base, text="대출도서:\n대여인:\n대여일:\n반납예정일\n", font=('돋움', 15), height=14)
-        rentlabel.pack(fill=X)
+        frame_B = Frame(self.Base, height=280)
+        frame_B.pack(fill=BOTH, expand=True, ipady=100)
+        frame_B.propagate(0)  #frame 크기를 고정시켜 줌
+        self.rentB_label = Label(frame_B, text="대출도서:", font=('돋움', 15))
+        self.rentU_label = Label(frame_B, text="대여인:", font=('돋움', 15))
+        self.rent_day = Label(frame_B, text="대여일:", font=('돋움', 15))
+        self.re_day = Label(frame_B, text="반납예정일:", font=('돋움', 15))
+        self.rentB_label.pack(fill=X, expand=True)
+        self.rentU_label.pack(fill=X, expand=True)
+        self.rent_day.pack(fill=X, expand=True)
+        self.re_day.pack(fill=X, expand=True)
 
     #최종 버튼(가운데 정렬)
     def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None, bt3_def=None):
@@ -106,20 +125,20 @@ class new_window:
         bt3.pack(side=LEFT, padx=5, pady=5)
 
     #최종 버튼(오른쪽 정렬)[대출-회원/도서 선택]
-    def under_button_R(self):
+    def under_button_R(self, chk_def=None):
         buttonBase = Label(self.base_frame, height=20)
         buttonBase.pack(side=BOTTOM, fill=X)
         CancelButton = Button(buttonBase, text="취소", font=('돋움', 13), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
         CancelButton.pack(side=RIGHT, padx=5, pady=5)
-        RentButton = Button(buttonBase, text="확인", font=('돋움', 13), bg='gray', fg='white', command=lambda:msg('확인', self.newWindow))
+        RentButton = Button(buttonBase, text="확인", font=('돋움', 13), bg='gray', fg='white', command=chk_def)
         RentButton.pack(side=RIGHT, padx=5, pady=5)
 
     def text_set(self, frame, font_size=13):
         sb = Scrollbar(frame)
-        self.text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
+        self.text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3, padx=10)    #spacing1~3:줄 사이 간격 지정
         sb.config(command=self.text.yview)
         sb.pack(side=RIGHT, fill=Y)
-        self.text.pack(side=TOP, fill=BOTH, expand=True, ipadx=2)
+        self.text.pack(side=TOP, fill=BOTH, expand=True, ipadx=5)
 
     #선택한 회원의 대출 목록을 출력시켜주는 함수[대출]
     def rent_list(self):
@@ -167,7 +186,14 @@ class new_window:
             self.text.delete("1.0", "end")
 
         cb_list = []        #체크박스 리스트(각 줄마다 다른 데이터를 반환 받기 위해)
-        chk_list = []       #체크박스를 클릭할 시 반환받는 값을 저장할 리스트
+        self.chk_list = []       #체크박스를 클릭할 시 반환받는 값을 저장할 리스트
+
+        def chk_command(i):
+            if cb_list[i].get() != 0:
+                self.chk_list.append(list[i])
+            else:
+                if list[i] in self.chk_list:
+                    self.chk_list.remove(list[i])
 
         if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
             self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
@@ -176,9 +202,12 @@ class new_window:
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(list)):
                 if choice:
-                    cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
+                    chk = IntVar()
+                    cb_list.append(chk)
+                    cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
-                self.text.insert('end', "  "+list[i])             #입력할 정보는 추후에 인자로 받아올 것
+                for j in range(len(list[i])):
+                    self.text.insert('end', " {}\t\t\t".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
                 if bt_text!=None:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
