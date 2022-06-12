@@ -21,7 +21,7 @@ class user_dataframe:
         info = list()
         for i in range(len(self.show)):
             info.append([self.show.iloc[i]['USER_NAME'], self.show.iloc[i]['USER_BIRTH'], self.show.iloc[i]['USER_PHONE'], '  ', False])
-            intext.append(self.show.iloc[i]['USER_NAME']+'\t\t'+self.show.iloc[i]['USER_BIRTH']+'\t\t'+'0'+self.show.iloc[i]['USER_PHONE'])
+            intext.append([self.show.iloc[i]['USER_NAME'],self.show.iloc[i]['USER_BIRTH'],'0'+self.show.iloc[i]['USER_PHONE']])
         if want == 1:
             return intext
         else:
@@ -35,7 +35,7 @@ class user_dataframe:
         info = list()
         for i in range(len(self.show_re)):
             info.append([self.show_re.iloc[i]['USER_NAME'], self.show_re.iloc[i]['USER_BIRTH'], self.show_re.iloc[i]['USER_PHONE'], '탈퇴', True])
-            intext.append(self.show_re.iloc[i]['USER_NAME']+'\t\t'+self.show_re.iloc[i]['USER_BIRTH']+'\t\t'+'0'+self.show_re.iloc[i]['USER_PHONE'])
+            intext.append([self.show_re.iloc[i]['USER_NAME'],self.show_re.iloc[i]['USER_BIRTH'],'0'+self.show_re.iloc[i]['USER_PHONE']])
         if want == 1:
             return intext
         else:
@@ -70,7 +70,7 @@ class user_dataframe:
                     remove = '회원'
                     choice = False
                 info.append([self.sch_data.iloc[i]['USER_NAME'], self.sch_data.iloc[i]['USER_BIRTH'], self.sch_data.iloc[i]['USER_PHONE'], remove, choice])
-                intext.append(self.sch_data.iloc[i]['USER_NAME']+'\t\t'+self.sch_data.iloc[i]['USER_BIRTH']+'\t\t'+'0'+self.sch_data.iloc[i]['USER_PHONE'])
+                intext.append([self.sch_data.iloc[i]['USER_NAME'],self.sch_data.iloc[i]['USER_BIRTH'],'0'+self.sch_data.iloc[i]['USER_PHONE']])
             if want == 1:
                 return intext
             else:
@@ -212,14 +212,14 @@ class user_dataframe:
         
     #csv 불러오기        
     def readcsv(self):
-        self.data = read_csv('user.csv', dtype={"USER_PHONE": str, "USER_SEX": bool,'USER_RENT_CNT' : int}, encoding='cp949')
-        self.data.drop(['Unnamed: 0'], axis = 1, inplace = True)
+        self.data = read_csv('user.csv', dtype={"USER_PHONE": str, "USER_SEX": bool,'USER_RENT_CNT' : int}, encoding='utf-8')
+        #self.data.drop(['Unnamed: 0'], axis = 1, inplace = True)
         self.data['USER_QUIT_DATE'] = to_datetime(self.data['USER_QUIT_DATE'])
         self.data = self.data.sort_values('USER_NAME')
     
     #CSV 저장
     def tocsv(self):
-        self.data.to_csv('user.csv', encoding='cp949')
+        self.data.to_csv('user.csv', encoding='utf-8', index = False)
 '''
 a = user_dataframe()
 a.readcsv()
