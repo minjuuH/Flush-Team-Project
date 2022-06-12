@@ -1,0 +1,5 @@
+BOOK_ISBN,BOOK_TITLE,BOOK_AUTHOR,BOOK_PUB,BOOK_PRICE,BOOK_LINK,BOOK_IMAGE,BOOK_DESCRIPTION
+9788970504773,파이썬과 데이터 과학,"천인국, 박동규, 강영민",생능출판사,26000,http://www.yes24.com,py.png,파이썬 교재
+9791163030911,점프투파이썬,박응용,이지스퍼블리싱,18800,http://www.yes24.com,jump.png,파이썬 교재
+9788966263301,it 지식,브라이언,인사이트,20000,http://www.yes24.com,it.png,it 교재
+9791160507812,모두의 데이터분석,"송석리, 이현아",길벗,19000,http://www.yes24.com,data.png,파이선 데이터 분석
