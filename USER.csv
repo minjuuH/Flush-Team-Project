@@ -1,7 +1,7 @@
 USER_NAME,USER_BIRTH,USER_PHONE,USER_SEX,USER_MAIL,USER_IMAGE,USER_RENT_CNT,USER_QUIT_DATE,USER_RENT_ALW,USER_WARN
-신사임당,1988-08-15,010-2910-0058,False,sinsa0815@daum.net,,0,2022-06-13,,0
+신사임당,1988-08-15,010-2910-0058,False,sinsa0815@daum.net,,0,,,0
 안중근,1998-05-04,010-0545-2172,True,ann0504@naver.com,,0,,,0
-유관순,1920-02-02,010-9001-1004,False,you0202@naver.com,,0,,,0
+유관순,1920-02-02,010-9001-1004,False,you0202@naver.com,,2,,,0
 이순신,1999-01-01,010-3965-4122,True,lee0101@naver.com,,0,,,0
 장영실,2000-12-25,010-0308-1734,True,hang1225@google.com,,0,,,0
 홍길동,1973-03-21,010-1274-6349,True,hong0321@naver.com,,0,,,0
