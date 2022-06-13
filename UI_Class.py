@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
+import Book_class as bc
 import User_dataframe as ud
 import User_View as uv
-import Book_class as BC
+import pandas as pd
 
 class new_window:
     #생성자
@@ -190,7 +191,7 @@ class new_window:
 
         def chk_command(i):
             if cb_list[i].get() != 0:
-                self.chk_list.append(list[i])            
+                self.chk_list.append(list[i])
             else:
                 if list[i] in self.chk_list:
                     self.chk_list.remove(list[i])
@@ -210,7 +211,7 @@ class new_window:
                     self.text.insert('end', " {} ".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
                     #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
                     if j!=len(list[i])-1:
-                        self.text.insert('end', "\t\t\t")
+                        self.text.insert('end', "\t\t\t")                
                 if bt_text!=None:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
@@ -251,12 +252,17 @@ class new_window:
         self.text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함 << 회원 조회창에 있는 검색바 지우고 여기에 추가해서 넣었습니다.
     
-        # 도서 데이터 출력 - 메인 UI_Class에 없는 함수
-    def Book_info_list(self, out_data, bt_text=None, font_size=13, choice=True) :
+    # 도서 데이터 출력 - 메인 UI_Class에 없는 함수
+    def Book_info_list(self, out_data, bt_text=None, font_size=13, command_def=None, choice=True, text_del=True) :
+        if text_del:
+            self.text.config(state=NORMAL)
+            self.text.delete('1.0', 'end')
+
         if len(out_data)==0:  #출력할 데이터가 존재하지 않을 경우
             self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
             lb = Label(self.text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
             self.text.window_create("end", window=lb)
+
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(out_data)):
                 if choice:
@@ -264,11 +270,29 @@ class new_window:
                     self.text.window_create("end", window=cb)
                 self.text.insert('end', out_data[i])             #입력할 정보는 추후에 인자로 받아올 것
                 if bt_text!=None:
-                    bt = Button(self.text, text=bt_text, font=('돋움', font_size-3))
+                    bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=command_def)
                     self.text.window_create('end', window=bt)
                 self.text.insert('end', '\n')
         self.text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
+
+    #도서 목록 출력[도서]
+    def Book_list(self, bar_text, bt_text, book_data,command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
+        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
+        label_bar.pack(fill=X)
+        label = Label(self.base_frame, relief="ridge", height=37, bg='white')
+        label.pack(fill=BOTH, expand=True)
+        self.text_set(label, 15)
+        self.Book_info_list(book_data, bt_text, 15, command_def, choice)
     
+    
+    # #도서 목록 출력[도서]
+    # def Book_list(self, bar_text, bt_text, command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
+    #     label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
+    #     label_bar.pack(fill=X)
+    #     label = Label(self.base_frame, relief="ridge", height=37, bg='white')
+    #     label.pack(fill=BOTH, expand=True)
+    #     self.text_set(label, 15)
+    #     self.info_list(bt_text, command_def, font_size=15, choice=choice)
 
     #회원, 도서 목록 리스트 출력[대출]
     def list_print(self, bar_text, list=[]):   #list:출력할 정보 리스트
@@ -286,14 +310,6 @@ class new_window:
         button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=bt_def)
         button.pack(side=LEFT, padx=2, pady=10)
 
-    #도서 목록 출력[도서]
-    def Book_list(self, bar_text, bt_text, command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
-        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
-        label_bar.pack(fill=X)
-        label = Label(self.base_frame, relief="ridge", height=37, bg='white')
-        label.pack(fill=BOTH, expand=True)
-        self.text_set(label, 15)
-        self.info_list(bt_text, command_def, font_size=15, choice=choice)
 
 
     #회원 목록 출력[회원]
@@ -407,17 +423,20 @@ class new_window:
      
          #입력칸 생성[도서/회원]
     def book_entry_set(self, t, r, re_choice=False, ol=False, text_data=None):
-        book_class = BC.Book_DataFrame()
+        book_class = bc.Book_DataFrame()
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)     #sticky : 지정된 칸 크기가 위젯 크기보다 클 경우, 정렬 방식을 지정
-        entry = Entry(self.Base_Top, width=55, font=('돋움', 13), relief='solid', bd=1)
-        in_data = StringVar()
+        if t == '가격' or t == 'ISBN':
+            get_data = IntVar()
+
+        else:
+            get_data = StringVar()
+        entry = Entry(self.Base_Top, width=55, textvariable= get_data, font=('돋움', 13), relief='solid', bd=1)
         if re_choice:
             entry.insert(0, text_data) #차후에 전달받은 데이터를 출력하는 것으로 변경
         entry.grid(row=r, column=2, padx=5, ipady=3, columnspan=3)
         if ol==True: 
-            # in_data = IntVar()
-            def com_isbn() :
+            def com_isbn() : # 중복확인
                 if entry.get() in str(book_class.book['BOOK_ISBN']): # ISBN 중복시
                     self.check_overlap = Label(self.Base_Top, text='이미 등록되어 있는 ISBN입니다.', fg='red', font=('돋움', 13), bg='white')
                     self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
@@ -429,8 +448,7 @@ class new_window:
             self.overlap_bt.grid(row=r, column=5)
             self.check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
             self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
-            
-        return in_data
+        return entry
 
     #입력칸 생성[회원]
     def u_entry_set(self, t, r, re_choice=False, show = None, ol=False, pic = False, form=False):
@@ -482,13 +500,12 @@ class new_window:
         info_label = Label(self.Base_Bottom, text='도서 설명', font=('돋움', 15), bg='white')
         info_label.pack(anchor=NW, padx=30, pady=10)
         entry = Entry(self.Base_Bottom, width=100, font=('돋움', 13), relief='solid', bd=1)
-        get_data = IntVar()
         if re_choice:
             entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
         if op_choice:
             entry.config(state=DISABLED)
         entry.pack(fill=X, padx=30, ipady=70)
-        return get_data
+        return entry
 
     #성별 지정 라디오버튼[회원]
     def user_gender(self, t, r, re_choice=False):
