@@ -107,6 +107,7 @@ def Rent_Screen(window, uc=None):
     rent_info = RD.Rent_DF()
     rent_info.read_csv()
 
+    #대출 기능
     def rent_acc(rent_IF, win, new_win):
         if len(rent_IF.rent_book)==0 or rent_IF.rent_user==None:
             messagebox.showwarning('도서관리시스템', '회원과 도서를 모두 선택해주십시오.')
@@ -114,11 +115,8 @@ def Rent_Screen(window, uc=None):
             msg_Ans = messagebox.askokcancel('도서관리시스템', "대출하시겠습니까?")  #부울값 반환 -> ok:True, cancel:False
             if msg_Ans:
                 rent_IF.Rent_Add()
-                print(rent_IF.rent)
-                print(rent_IF.user['USER_RENT_CNT'])
-                #rent_IF.to_csv()
-                messagebox.showinfo('도서관리시스템', "대출 완료되었습니다.\n대여일:{}\n반납예정일:{}".format(rent_IF.rent.loc[0,'RENT_DATE'], rent_IF.rent.loc[0,'RETURN_DUE_DATE']))
-                #main_menu(win, new_win)
+                rent_IF.to_csv()
+                messagebox.showinfo('도서관리시스템', "대출 완료되었습니다.\n대여일:{}\n반납예정일:{}".format(rent_IF.add_rent.loc[0,'RENT_DATE'], rent_IF.add_rent.loc[0,'RETURN_DUE_DATE']))
                 Rent_Screen(window, new_win)
 
     new_win.Choice_base()
@@ -143,25 +141,47 @@ def Return_Screen(window, uc=None):
     rent_info = RD.Rent_DF()
     rent_info.read_csv()
 
+    #반납 기능
+    def re_acc(re_IF, win, new_win):
+        for i in new_win.chk_list:
+            re_IF.re_book.append(i[3])
+        print(re_IF.re_book)
+        if re_IF.re_user==None:
+            messagebox.showwarning('도서관리시스템', '회원이 선택되지 않았습니다.')
+        elif len(re_IF.re_book)==0:
+            messagebox.showwarning('도서관리시스템', '반납할 도서를 선택해주십시오.')
+        else:
+            msg_Ans = messagebox.askokcancel('도서관리시스템', "반납하시겠습니까?")  #부울값 반환 -> ok:True, cancel:False
+            if msg_Ans:
+                re_IF.Rent_return()
+                re_IF.to_csv()
+                messagebox.showinfo('도서관리시스템', "반납 처리되었습니다.\n반납예정일:{}\n반납일:{}".format(re_IF.re_due_day, re_IF.re_day))
+                Return_Screen(window, new_win)
+
     new_win.Choice_base()
     #회원 선택 버튼/선택한 회원 정보 출력
     new_win.Choice('회원 선택', 45, lambda:User_Choice(window, new_win, rent_info, True))
     #반납/취소 버튼
-    new_win.under_button('반납', new_win.Base, bt3_def=lambda:main_menu(window, new_win))
+    new_win.under_button('반납', new_win.Base, bt3_def=lambda:main_menu(window, new_win), bt2_def=lambda:re_acc(rent_info,window,new_win))
     #대여 목록 출력
     new_win.rent_list()
 
+#회원 선택 기능
 def chkU_def(win, root_win, rent, re=False):
     if len(win.chk_list)==0:
         messagebox.showwarning("회원 선택", "회원을 선택하십니오.", parent=win.newWindow)
     elif len(win.chk_list)==1:
+        root_win.userinfo.config(text=win.chk_list[0][0]+' | '+win.chk_list[0][1]+' | '+win.chk_list[0][2])
         if re:
             rent_DF = rent.existence(win.chk_list[0][2])
-            # print(rent.book)
-            # print(rent.user)
-            root_win.info_list(text_del=1, list=win.chk_list)
+            rent.re_user = win.chk_list[0][2]   #반납할 회원 정보 rent 객체에 저장
+            book_list = list()
+            for i in rent_DF['BOOK_ISBN']:
+                rent_book = rent.book[rent.book['BOOK_ISBN']==i]
+                idx = rent_book.index
+                book_list.append([rent_book.loc[idx[0],'BOOK_TITLE'],rent_book.loc[idx[0],'BOOK_AUTHOR'],rent_book.loc[idx[0],'BOOK_PUB'],rent_book.loc[idx[0],'BOOK_ISBN']])
+            root_win.info_list(text_del=1, list=book_list)
         else:
-            root_win.userinfo.config(text=win.chk_list[0][0]+' | '+win.chk_list[0][1]+' | '+win.chk_list[0][2])
             root_win.rentU_label.config(text="대여인:"+win.chk_list[0][0])
             rent.rent_user = win.chk_list[0][2] #대출정보에 사용할 회원 전화번호 데이터 저장
             root_win.rent_day.config(text="대여일:{}".format(dt.datetime.now().date()))
@@ -170,7 +190,7 @@ def chkU_def(win, root_win, rent, re=False):
     else:
         messagebox.showwarning("회원 선택", "회원 선택은 1명만 가능합니다.", parent=win.newWindow)
         
-        
+#도서 선택 기능
 def chkB_def(win, root_win, rent):
     root_win.text.config(state=NORMAL)  #텍스트 위젯을 비워주기 위해 위젯 상태를 변경가능한 상태로 설정
     root_win.text.delete("1.0", "end")
@@ -202,8 +222,9 @@ def User_Choice(window, root_win, rent, re=False):
     #회원 목록이 출력될 프레임
     user_list = list()      #user 출력형 리스트 생성
     #전체 user를 출력형 list에 append -> 탈퇴회원을 제외하고 출력하도록 변경할 것
-    for i in rent.user.index:
-        user_list.append([rent.user.loc[i,'USER_NAME'],rent.user.loc[i,'USER_BIRTH'],rent.user.loc[i,'USER_PHONE']])
+    user = rent.user[rent.user['USER_QUIT_DATE'].isna()]    #탈퇴회원을 제외한 회원 목록
+    for i in user.index:
+        user_list.append([user.loc[i,'USER_NAME'],user.loc[i,'USER_BIRTH'],user.loc[i,'USER_PHONE']])
     new_win.list_print("\t이름\t\t생년월일\t전화번호", user_list)
 
 #도서 선택창
@@ -217,6 +238,11 @@ def Book_Choice(window, root_win, rent):
     #도서 목록이 출력될 프레임
     book_list = list()      #book 출력형 리스트 생성
     #전체 book를 출력형 list에 append -> 대출 중인 도서를 제외하고 출력하도록 변경할 것
-    for i in book.index:
-        book_list.append([book.loc[i,'BOOK_TITLE'],book.loc[i,'BOOK_AUTHOR'],book.loc[i,'BOOK_PUB'],book.loc[i,'BOOK_ISBN']])
+    for i in rent.book.index:
+        #대출 정보에 존재하는 도서인지 확인
+        if not rent.rent['BOOK_ISBN'].isin([rent.book['BOOK_ISBN'][i]]).any():
+            book_list.append([rent.book.loc[i,'BOOK_TITLE'],rent.book.loc[i,'BOOK_AUTHOR'],rent.book.loc[i,'BOOK_PUB'],rent.book.loc[i,'BOOK_ISBN']])
+        #반납된 도서인지 확인
+        elif not rent.rent[rent.rent['BOOK_ISBN']==rent.book['BOOK_ISBN'][i]]['RETURN_DATE'].isna().any():
+            book_list.append([rent.book.loc[i,'BOOK_TITLE'],rent.book.loc[i,'BOOK_AUTHOR'],rent.book.loc[i,'BOOK_PUB'],rent.book.loc[i,'BOOK_ISBN']])
     new_win.list_print("\t제목\t저자\t출판사\tISBN\t대출여부", book_list)
