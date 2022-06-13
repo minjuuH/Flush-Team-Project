@@ -21,7 +21,7 @@ class user_dataframe:
         info = list()
         for i in range(len(self.show)):
             info.append([self.show.iloc[i]['USER_NAME'], self.show.iloc[i]['USER_BIRTH'], self.show.iloc[i]['USER_PHONE'], '  ', False])
-            intext.append([self.show.iloc[i]['USER_NAME'],self.show.iloc[i]['USER_BIRTH'],'0'+self.show.iloc[i]['USER_PHONE']])
+            intext.append([self.show.iloc[i]['USER_NAME'],self.show.iloc[i]['USER_BIRTH'],self.show.iloc[i]['USER_PHONE']])
         if want == 1:
             return intext
         else:
@@ -35,7 +35,7 @@ class user_dataframe:
         info = list()
         for i in range(len(self.show_re)):
             info.append([self.show_re.iloc[i]['USER_NAME'], self.show_re.iloc[i]['USER_BIRTH'], self.show_re.iloc[i]['USER_PHONE'], '탈퇴', True])
-            intext.append([self.show_re.iloc[i]['USER_NAME'],self.show_re.iloc[i]['USER_BIRTH'],'0'+self.show_re.iloc[i]['USER_PHONE']])
+            intext.append([self.show_re.iloc[i]['USER_NAME'],self.show_re.iloc[i]['USER_BIRTH'],self.show_re.iloc[i]['USER_PHONE']])
         if want == 1:
             return intext
         else:
@@ -70,7 +70,7 @@ class user_dataframe:
                     remove = '회원'
                     choice = False
                 info.append([self.sch_data.iloc[i]['USER_NAME'], self.sch_data.iloc[i]['USER_BIRTH'], self.sch_data.iloc[i]['USER_PHONE'], remove, choice])
-                intext.append([self.sch_data.iloc[i]['USER_NAME'],self.sch_data.iloc[i]['USER_BIRTH'],'0'+self.sch_data.iloc[i]['USER_PHONE']])
+                intext.append([self.sch_data.iloc[i]['USER_NAME'],self.sch_data.iloc[i]['USER_BIRTH'],self.sch_data.iloc[i]['USER_PHONE']])
             if want == 1:
                 return intext
             else:
