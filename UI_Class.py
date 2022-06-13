@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import User_dataframe as ud
 import User_View as uv
-import pandas as pd
+import Book_class as BC
 
 class new_window:
     #생성자
@@ -190,7 +190,7 @@ class new_window:
 
         def chk_command(i):
             if cb_list[i].get() != 0:
-                self.chk_list.append(list[i])
+                self.chk_list.append(list[i])            
             else:
                 if list[i] in self.chk_list:
                     self.chk_list.remove(list[i])
@@ -207,7 +207,10 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
-                    self.text.insert('end', " {}\t\t\t".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                    self.text.insert('end', " {} ".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                    #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
+                    if j!=len(list[i])-1:
+                        self.text.insert('end', "\t\t\t")
                 if bt_text!=None:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
