@@ -7,8 +7,12 @@ class Rent_DF:
         self.book = pd.read_csv('BOOK.csv', encoding = 'utf-8')
         self.user = pd.read_csv('USER.csv', encoding = 'utf-8')
         self.rent = pd.DataFrame(columns=['BOOK_ISBN', 'USER_PHONE', 'RENT_DATE', 'RETURN_DUE_DATE', 'RETURN_DATE'])
+        #대출 시 사용할 멤버변수
         self.rent_book = list()
         self.rent_user = None
+        #반납 시 사용할 멤버변수
+        self.re_book = list()
+        self.re_user = None
 
     def read_csv(self):
         if os.path.isfile('RENT.csv'):
@@ -34,47 +38,34 @@ class Rent_DF:
     def existence(self, user_phone):
         #선택한 회원의 대출 정보 검사
         if (self.rent['USER_PHONE']==user_phone).any:
-            return self.rent[self.rent['USER_PHONE']==user_phone]
-        else:
-            print('대출 정보가 없습니다.')
-    
-    #작업 중인 코드
-    # def changeB(self, book_isbn):
-    #     self.book[self.book['BOOK_ISBN']==book_isbn]
+            info = self.rent[self.rent['USER_PHONE']==user_phone]
+            return info[info['RETURN_DATE'].isna()]    #반납되지 않은 대출 정보만 리턴
 
-    def Rent_return(self, user_phone):
-        # user_phone = user['USER_PHONE'][3]
-
-        #외부에서 작업할 내역
-        #선택한 회원의 대출 정보가 있는지 검사
-        # if (self.rent['USER_PHONE']==user_phone).any:
-        #     print(rent[rent['USER_PHONE']==user_phone])
-        # else:
-        #     print('대출 정보가 없습니다.')
-        #     quit()
-
-        re_day = dt.datetime.now().date()
+    def Rent_return(self):
+        self.re_day = dt.datetime.now().date()
         
         overdue = dt.timedelta()
-        for i in self.rent[self.rent['USER_PHONE']==user_phone].index:
-            self.rent.loc[i, 'RETURN_DATE'] = re_day
-            #도서를 반납하는만큼 회원의 도서대출권수를 줄여준다.
-            self.user.loc[self.user['USER_PHONE']==user_phone, 'USER_RENT_CNT'] -= 1
+        for i in self.rent[self.rent['USER_PHONE']==self.re_user].index:
+            print(self.rent.loc[i,'BOOK_ISBN'])
+            if self.rent.loc[i,'BOOK_ISBN'] in self.re_book:
+                self.rent.loc[i, 'RETURN_DATE'] = self.re_day
+                #도서를 반납하는만큼 회원의 도서대출권수를 줄여준다.
+                self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_RENT_CNT'] -= 1
 
-            #대출 정보에 문자열로 저장된 반납예정일 데이터를 date 타입으로 변경
-            re_due_day = dt.datetime.strptime(self.rent['RETURN_DUE_DATE'][i], '%Y-%m-%d').date()
-            #더 많이 연체된 날짜만큼 대출가능일을 늦추기 위해
-            if overdue < re_day-re_due_day:     
-                overdue = re_day-re_due_day
+                #대출 정보에 문자열로 저장된 반납예정일 데이터를 date 타입으로 변경
+                self.re_due_day = dt.datetime.strptime(self.rent['RETURN_DUE_DATE'][i], '%Y-%m-%d').date()
+                #더 많이 연체된 날짜만큼 대출가능일을 늦추기 위해
+                if overdue < self.re_day-self.re_due_day:     
+                    overdue = self.re_day-self.re_due_day
 
         if overdue <= dt.timedelta(0):
             print('연체된 도서가 없습니다.')
             return True
         else:
             #대출가능일 지정
-            self.user.loc[self.user['USER_PHONE']==user_phone, 'USER_RENT_ALW']=re_day+overdue
+            self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_RENT_ALW']=self.re_day+overdue
             #경고횟수 추가
-            self.user.loc[self.user['USER_PHONE']==user_phone, 'USER_WARN']+=1
+            self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_WARN']+=1
             #print('연체되었습니다.')
             #print('대출가능일 : {}'.format((re_day+overdue).strftime('%Y.%m.%d')))
             return False
