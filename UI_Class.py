@@ -126,10 +126,10 @@ class new_window:
         bt3.pack(side=LEFT, padx=5, pady=5)
 
     #최종 버튼(오른쪽 정렬)[대출-회원/도서 선택]
-    def under_button_R(self, chk_def=None):
+    def under_button_R(self, chk_def=None, cancel_def=None):
         buttonBase = Label(self.base_frame, height=20)
         buttonBase.pack(side=BOTTOM, fill=X)
-        CancelButton = Button(buttonBase, text="취소", font=('돋움', 13), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
+        CancelButton = Button(buttonBase, text="취소", font=('돋움', 13), bg='gray', fg='white', command=cancel_def)
         CancelButton.pack(side=RIGHT, padx=5, pady=5)
         RentButton = Button(buttonBase, text="확인", font=('돋움', 13), bg='gray', fg='white', command=chk_def)
         RentButton.pack(side=RIGHT, padx=5, pady=5)
@@ -208,7 +208,10 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
-                    self.text.insert('end', " {}\t\t\t".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                    self.text.insert('end', " {} ".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                    #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
+                    if j!=len(list[i])-1:
+                        self.text.insert('end', "\t\t\t")                
                 if bt_text!=None:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
