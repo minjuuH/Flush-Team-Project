@@ -216,11 +216,12 @@ class new_window:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
                     else:
-                        bt = self.userButton(self.text, bt_text, font_size, bt_buttonlambda, list[i][-10:], uc)
+                        bt = self.userButton(self.text, bt_text, font_size, bt_buttonlambda, list[i][2], uc)
                     self.text.window_create('end', window=bt)
                 self.text.insert('end', '\n')
         self.text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
+ 
     
     def userButton(self,window, showText, font_size,def_info, phone, uc):
         if def_info[0] == 1:
@@ -245,7 +246,7 @@ class new_window:
                 if choice:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
                     self.text.window_create("end", window=cb)
-                self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t0'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
+                self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
                 bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x = bt_list[i][2], y = bt_list[i][4]:uv.userwindowinfo(bt_window, x, uc, Quser=y))
                 self.text.window_create('end', window=bt)
                 self.text.insert('end', '\n')
@@ -470,7 +471,7 @@ class new_window:
             def check():
                 a = ud.user_dataframe()
                 a.readcsv()
-                phone = int(entry.get())
+                phone = entry.get()
                 a.checkphone(str(phone))
             overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command = check)
             overlap_bt.grid(row=r, column=5)
