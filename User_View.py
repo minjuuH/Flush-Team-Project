@@ -108,7 +108,7 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
     u_new_win.input_set('회원 정보', 0, showimage = showlist[5])
     u_new_win.info_output('이름', 1, showlist[0])
     u_new_win.info_output('생년월일', 2, showlist[1])
-    u_new_win.info_output('전화번호', 3, '0'+showlist[2])
+    u_new_win.info_output('전화번호', 3, showlist[2])
     u_new_win.info_output('성별', 4, showlist[3])
     u_new_win.info_output('이메일', 5, showlist[4])
     if Quser:
@@ -135,13 +135,13 @@ def userwindowmodi(window, userphone, uc=None):
     u_new_win.input_set('회원 수정',0 , showimage= modiuserinfo[5])
     nameentry = u_new_win.u_entry_set('이름', 1, True, modiuserinfo[0])
     birthentry = u_new_win.u_entry_set('생년월일', 2, True, modiuserinfo[1])
-    phoneentry = u_new_win.u_entry_set('전화번호', 3, True, '0'+modiuserinfo[2], True)
+    phoneentry = u_new_win.u_entry_set('전화번호', 3, True, modiuserinfo[2], True)
     u_new_win.user_gender('성별', 5, modiuserinfo[3])
     emailentry = u_new_win.u_entry_set('이메일', 6, True, modiuserinfo[4])
     imageentry = u_new_win.u_entry_set('회원사진', 7, show= modiuserinfo[5], pic=True)
     
     def modiuserdata():
-        modidata = [nameentry.get(), birthentry.get(), phoneentry.get()[1:], u_new_win.gender, emailentry.get(), str(imageentry.get())]
+        modidata = [nameentry.get(), birthentry.get(), phoneentry.get(), u_new_win.gender, emailentry.get(), str(imageentry.get())]
         ask = modiuser.modidata(modiuserinfo[2], modidata)
         modiuser.tocsv()
         if ask:
@@ -166,7 +166,7 @@ def userwindowadd(window, uc=None):
     emailentry = u_new_win.u_entry_set('이메일', 6)
     imageentry = u_new_win.u_entry_set('회원사진', 7, pic=True)
     def adduserdata():
-        modidata = [nameentry.get(), birthentry.get(), phoneentry.get()[1:], u_new_win.gender, emailentry.get(), str(imageentry.get())]
+        modidata = [nameentry.get(), birthentry.get(), phoneentry.get(), u_new_win.gender, emailentry.get(), str(imageentry.get())]
         ask = adduser.add_data(modidata)
         adduser.tocsv()
         if ask:
