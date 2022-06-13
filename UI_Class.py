@@ -125,10 +125,10 @@ class new_window:
         bt3.pack(side=LEFT, padx=5, pady=5)
 
     #최종 버튼(오른쪽 정렬)[대출-회원/도서 선택]
-    def under_button_R(self, chk_def=None):
+    def under_button_R(self, chk_def=None, cancel_def=None):
         buttonBase = Label(self.base_frame, height=20)
         buttonBase.pack(side=BOTTOM, fill=X)
-        CancelButton = Button(buttonBase, text="취소", font=('돋움', 13), bg='gray', fg='white', command=lambda:msg("취소", self.newWindow))
+        CancelButton = Button(buttonBase, text="취소", font=('돋움', 13), bg='gray', fg='white', command=cancel_def)
         CancelButton.pack(side=RIGHT, padx=5, pady=5)
         RentButton = Button(buttonBase, text="확인", font=('돋움', 13), bg='gray', fg='white', command=chk_def)
         RentButton.pack(side=RIGHT, padx=5, pady=5)
