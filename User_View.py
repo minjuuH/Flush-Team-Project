@@ -1,12 +1,14 @@
 from tkinter import *
 from tkinter import messagebox
 from numpy import *
-from pandas import isna, notna
+from pandas import *
+#from pandas import isna, notna
 import User_dataframe as UD
 import UI_Class as UC
-
+import Rent_Dataframe as RD
 import Rent_View as rv
 import Book_def as Bd
+
 
 def search_info(win, t, bt_def=None, bt_button = None, chk:bool=1):
     search = win.input_text.get()   #기입창에 입력한 데이터 추출
@@ -116,7 +118,12 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
         Q.pack(pady=50)
         u_new_win.under_button('복구', u_new_win.base_frame, bt2_def = lambda:reset_user(window, userphone, u_new_win), bt3_def=lambda:main_menu(window, u_new_win))
     else:
-        u_new_win.user_rent()
+        user_rent_data = read_csv('RENT.csv', encoding = 'utf-8')
+        rent = user_rent_data.loc[(user_rent_data['USER_PHONE'].str.contains(showlist[2])).any() and user_rent_data['RETURN_DATE'].isnull()]
+        rentdata = rent['BOOK_ISBN'].values.tolist()
+        bookdata = read_csv('BOOK.csv', encoding='utf-8')
+        bookdata = bookdata[bookdata['BOOK_ISBN'].isin(rentdata)]
+        u_new_win.user_rent(bookdata)
         #u_new_win.under_button('탈퇴', u_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:userwindowmodi(u_new_win, userphone,1), bt2_def= lambda:del_user(u_new_win, userphone), bt3_def=lambda:main_menu(window, u_new_win))
         u_new_win.under_button('탈퇴', u_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:userwindowmodi(window, userphone, u_new_win), bt2_def= lambda:del_user(window, userphone, uc=u_new_win), bt3_def=lambda:main_menu(window, u_new_win))
 
