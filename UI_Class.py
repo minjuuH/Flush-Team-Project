@@ -558,13 +558,14 @@ class new_window:
         
     #회원 대여 도서 목록 출력[회원]
     def user_rent(self, booklist):
-        rentlist = Label(self.Base, text="  \t대여 도서\t\t\t\t대여일\t반납예정일", font=('돋움', 15), anchor=NW)
+        rentlist = Label(self.Base, text="  대여 도서\t\t대여일\t\t반납예정일", font=('돋움', 15), anchor=NW)
         rentlist.pack(fill=X)
         listframe = Frame(self.Base, bg="white")
         listframe.pack(fill=BOTH, expand=True)
         listframe.propagate(0)      #프레임 크기 고정
         self.text_set(listframe)
-        self.Book_info_list(booklist, '연장', choice=False)
+        #bt_def에 연장 기능 추가할 예정
+        self.info_list('연장',list = booklist, choice=False, bt_def=None)
           
 #메시지창 띄우는 이벤트
 def msg(showText, win=0):

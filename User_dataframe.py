@@ -90,7 +90,7 @@ class user_dataframe:
         else:
             IMAGE = self.info.iloc[0]['USER_IMAGE']
         #탈퇴회원      
-        showit = [self.info.iloc[0]['USER_NAME'], self.info.iloc[0]['USER_BIRTH'], self.info.iloc[0]['USER_PHONE'], sex, self.info.iloc[0]['USER_MAIL'], IMAGE]
+        showit = [self.info.iloc[0]['USER_NAME'], self.info.iloc[0]['USER_BIRTH'], self.info.iloc[0]['USER_PHONE'], sex, self.info.iloc[0]['USER_MAIL'], IMAGE, self.info.iloc[0]['USER_RENT_CNT']]
         return showit
     
     def modiuserinfo(self, phone):
