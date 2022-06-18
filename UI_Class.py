@@ -142,13 +142,15 @@ class new_window:
         self.text.pack(side=TOP, fill=BOTH, expand=True, ipadx=5)
 
     #선택한 회원의 대출 목록을 출력시켜주는 함수[대출]
-    def rent_list(self):
+    def rent_list(self, bar_text=None):
         rentlist = Label(self.Base, bg="white", text="  대여 목록", font=('돋움', 15), anchor=NW)
         rentlist.pack(fill=X)
         listLabel2 = Label(self.Base, bg="white")
         listLabel2.pack(fill=BOTH, expand=True)
         booklist = Frame(listLabel2, relief="solid", height=450, bd=1)          #대여 목록을 출력할 자리 frame으로 지정
         booklist.pack(fill=BOTH, padx=5, pady=5)
+        labelBar = Label(booklist, bg="white", relief='ridge', text=bar_text, font=('돋움', 13), anchor=W)
+        labelBar.pack(fill=BOTH)
         self.text_set(booklist)
         self.info_list()
 
@@ -208,10 +210,21 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
-                    self.text.insert('end', " {} ".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                    if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<3:
+                        list[i][j] = list[i][j][:8]+'...'
+                    if font_size==13 and len(list[i])>3:
+                        if type(list[i][j])==str and len(list[i][j])<8 and len(list[i])>3:
+                            self.text.insert('end', " {:<25}".format(list[i][j]))
+                        else:
+                            self.text.insert('end', " {:<20}".format(list[i][j]))
+                    else:
+                        if j==0 and len(list[i][0])>3:
+                            self.text.insert('end', " {:28}".format(list[i][j]))
+                        else:
+                            self.text.insert('end', " {:30}".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
                     #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
-                    if j!=len(list[i])-1:
-                        self.text.insert('end', "\t\t\t")                
+                    # if j!=len(list[i])-1:
+                    #     self.text.insert('end', "\t\t\t")                
                 if bt_text!=None:
                     if bt_buttonlambda == None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
