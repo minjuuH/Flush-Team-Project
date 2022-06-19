@@ -11,6 +11,7 @@ class new_window:
     def __init__(self):
         self.newWindow = None       #이후에 Toplavel 객체를 저장할 변수 지정
         self.base_frame = None      #이후에 화면의 베이스가 되는 프레임 객체를 저장할 변수 지정
+        
 
     #외부창 생성(외부창이 아닐 경우에 사용)
     def make_window(self, base_win, title):
@@ -227,7 +228,7 @@ class new_window:
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
  
     
-    def userButton(self,window, showText, font_size,def_info, phone, uc):
+    def userButton(self,window, showText, font_size,def_info, phone, uc = None):
         if def_info[0] == 1:
             button = Button(window, text=showText, font=('돋움', font_size-3), command=lambda x=def_info[1], y = phone:uv.userwindowmodi(x, y, uc))
             return button
@@ -321,14 +322,18 @@ class new_window:
     def User_list(self, bt_text, userlist=None, inwindow = None, command_def = None, check_choice=True, quit_choice = False, t_d=False, uc=None):
         #check_choice:체크버튼 출력 여부를 지정 / quit_choice:탈퇴회원 출력 여부를 지정(탈퇴회원도 출력한다면, 체크버튼으로 탈퇴/일반 회원을 선택할 수 있게 함)
         if quit_choice:
-            self.UserSearch_bar(bt_text, inwindow, uc=uc)
+            self.UserSearch_bar(bt_text, inwindow, check_choice, uc=uc)
         userdata = ud.user_dataframe()
         userdata.readcsv()
         showlist = []
-        choiceBar = Label(self.base_frame, relief="ridge", bg='white',text="\t이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
-        #label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
-        #choiceBar.pack(fill=X, ipady=3)
-        #label_bar.pack(fill=X)
+
+        choiceBar = Label(self.base_frame, relief="ridge", bg='white')
+        if quit_choice:
+            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
+        else:
+            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
+        choiceBar.pack(fill=X)
+        label_bar.pack(fill=X)
         
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
         def quitUser():
