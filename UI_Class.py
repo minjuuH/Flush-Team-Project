@@ -210,24 +210,26 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
-                    if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<3:
+                    if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<2:
                         list[i][j] = list[i][j][:8]+'...'
                     if font_size==13 and len(list[i])>3:
                         if type(list[i][j])==str and len(list[i][j])<8 and len(list[i])>3:
                             self.text.insert('end', " {:<25}".format(list[i][j]))
                         else:
                             self.text.insert('end', " {:<20}".format(list[i][j]))
+                    elif len(list[i])>3 and j==0 and len(list[i][0])<6:
+                        self.text.insert('end', " {:<35}".format(list[i][j]))
                     else:
                         if j==0 and len(list[i][0])>3:
-                            self.text.insert('end', " {:28}".format(list[i][j]))
+                            self.text.insert('end', " {:<28}".format(list[i][j]))
                         else:
-                            self.text.insert('end', " {:30}".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
+                            self.text.insert('end', " {:<30}".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
                     #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
                     # if j!=len(list[i])-1:
                     #     self.text.insert('end', "\t\t\t")                
                 if bt_text!=None:
-                    if bt_buttonlambda == None:
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=bt_def)        # <- 원본
+                    if bt_buttonlambda == None and bt_def!=None:
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=list[i][1],y=list[i][2],z=list[i][3]:bt_def(x,y,z))        # <- 원본
                     else:
                         bt = self.userButton(self.text, bt_text, font_size, bt_buttonlambda, list[i][2], uc)
                     self.text.window_create('end', window=bt)
@@ -557,15 +559,15 @@ class new_window:
         female.grid(row=r, column=3, sticky=W)
         
     #회원 대여 도서 목록 출력[회원]
-    def user_rent(self, booklist):
-        rentlist = Label(self.Base, text="  대여 도서\t\t대여일\t\t반납예정일", font=('돋움', 15), anchor=NW)
+    def user_rent(self, booklist, replus_def=None):
+        rentlist = Label(self.Base, text="  대여 도서\t\tISBN\t\t대여일\t\t반납예정일", font=('돋움', 15), anchor=NW)
         rentlist.pack(fill=X)
         listframe = Frame(self.Base, bg="white")
         listframe.pack(fill=BOTH, expand=True)
         listframe.propagate(0)      #프레임 크기 고정
         self.text_set(listframe)
         #bt_def에 연장 기능 추가할 예정
-        self.info_list('연장',list = booklist, choice=False, bt_def=None)
+        self.info_list('연장',list = booklist, choice=False, bt_def=replus_def, font_size=15)
           
 #메시지창 띄우는 이벤트
 def msg(showText, win=0):

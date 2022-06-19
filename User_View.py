@@ -8,7 +8,7 @@ import Rent_Dataframe as RD
 import Rent_View as rv
 import Book_def as Bd
 import Book_class as Bc
-
+import datetime as dt
 
 def search_info(win, t, bt_def=None, bt_button = None, chk:bool=1):
     search = win.input_text.get()   #기입창에 입력한 데이터 추출
@@ -113,24 +113,54 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
     u_new_win.info_output('전화번호', 3, showlist[2])
     u_new_win.info_output('성별', 4, showlist[3])
     u_new_win.info_output('이메일', 5, showlist[4])
+
+    rent_info = RD.Rent_DF()
+    rent_info.read_csv()
+
+    def replus(isbn, rent_day, re_day):
+        rent_day = dt.datetime.strptime(rent_day, '%Y-%m-%d').date()
+        re_day = dt.datetime.strptime(re_day, '%Y-%m-%d').date()
+        overdue = re_day-dt.datetime.today().date()
+
+        print(re_day-dt.timedelta(days=7))
+
+        if overdue < dt.timedelta(0):
+            messagebox.showerror('도서관리시스템','연체된 도서는 연장할 할 수 없습니다.')
+        #연장한 전적이 있는 도서일 경우
+        elif re_day-dt.timedelta(days=7)!=rent_day:
+            messagebox.showerror('도서관리시스템','이미 연장된 도서입니다.')
+        else:
+            re_day = rent_info.Rent_replus(isbn)
+            rent_info.to_csv()
+            messagebox.showinfo('도서관리시스템','연장되었습니다\n반납예정일 : {}'.format((re_day).strftime('%Y.%m.%d')))
+            showbook = make_list()            
+            u_new_win.info_list(bt_def=replus, list=showbook, text_del=1, bt_text='연장', font_size=15, choice=False)
+
+
+    def make_list():
+        if showlist[-1] == 0:
+            showbook = []
+            return showbook
+        else:
+            #대출 내역이 있는 회원창에 들어가면 해당 회원이 대출한 도서인지에 상관없이 현재 대출중인 모든 도서 목록이 보이는 오류로 인한 showbook 리스트 수정
+            rent_DF = rent_info.existence(showlist[2])
+            showbook = list()
+            for i in rent_DF['BOOK_ISBN']:
+                #편의성을 위해 대출 도서 정보에 반납예정일을 띄워줌
+                re_due_day = rent_DF.loc[rent_DF[rent_DF['BOOK_ISBN']==i].index[0], 'RETURN_DUE_DATE']
+                rent_day = rent_DF.loc[rent_DF[rent_DF['BOOK_ISBN']==i].index[0], 'RENT_DATE']
+                rent_book = rent_info.book[rent_info.book['BOOK_ISBN']==i]
+                idx = rent_book.index
+                showbook.append([rent_book.loc[idx[0],'BOOK_TITLE'],rent_book.loc[idx[0],'BOOK_ISBN'],rent_day,re_due_day])
+            return showbook
+
     if Quser:
         Q = Label(u_new_win.Base_Bottom, text='탈퇴회원입니다.', font=('돋움', 15), fg='red', bg='white')
         Q.pack(pady=50)
         u_new_win.under_button('복구', u_new_win.base_frame, bt2_def = lambda:reset_user(window, userphone, u_new_win), bt3_def=lambda:main_menu(window, u_new_win))
     else:
-        if showlist[-1] == 0:
-            showbook = []
-        else:
-            user_rent_data = read_csv('RENT.csv', encoding = 'utf-8')
-            rent = user_rent_data.loc[(user_rent_data['USER_PHONE'].str.contains(showlist[2])).any() and user_rent_data['RETURN_DATE'].isnull()]
-            rentdata = rent['BOOK_ISBN'].values.tolist()
-            bookdata = Bc.Book_DataFrame()
-            bookdata.book = bookdata.book[bookdata.book['BOOK_ISBN'].isin(rentdata)]
-            showbook = []
-            for i in range(len(rent)):
-                showbook.append([bookdata.book.iloc[i]['BOOK_TITLE'], rent.iloc[i]['RENT_DATE'], rent.iloc[i]['RETURN_DUE_DATE']])
-            
-        u_new_win.user_rent(showbook)
+        showbook = make_list()     
+        u_new_win.user_rent(showbook, replus)
         #u_new_win.under_button('탈퇴', u_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:userwindowmodi(u_new_win, userphone,1), bt2_def= lambda:del_user(u_new_win, userphone), bt3_def=lambda:main_menu(window, u_new_win))
         u_new_win.under_button('탈퇴', u_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:userwindowmodi(window, userphone, u_new_win), bt2_def= lambda:del_user(window, userphone, uc=u_new_win), bt3_def=lambda:main_menu(window, u_new_win))
 

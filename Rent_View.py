@@ -155,7 +155,7 @@ def chkU_def(win, root_win, rent, re=False):
             root_win.info_list(text_del=1, list=book_list)
             root_win.userinfo.config(text=win.chk_list[0][0]+' | '+win.chk_list[0][1]+' | '+win.chk_list[0][2])
             win.newWindow.withdraw()
-        elif rent.rent_allow(win.chk_list[0][2]):   #대출창에서 회원 선택을 수행할 경우
+        elif rent.rent_allow(win.chk_list[0][2]):   #대출창에서 기능 수행&선택한 회원이 대출 가능한 상태일 경우
             root_win.rentU_label.config(text="대여인:"+win.chk_list[0][0])
             rent.rent_user = win.chk_list[0][2] #대출정보에 사용할 회원 전화번호 데이터 저장
             root_win.rent_day.config(text="대여일:{}".format(dt.datetime.now().date()))
@@ -164,7 +164,7 @@ def chkU_def(win, root_win, rent, re=False):
             win.newWindow.withdraw()
         else:
             messagebox.showinfo('회원 선택', '연체된 회원은 대출이 불가합니다.', parent=win.newWindow)
-    else:                       #선택된 회원이 한 명을 초과한 경우
+    else:   #선택된 회원이 한 명을 초과한 경우
         messagebox.showwarning("회원 선택", "회원 선택은 1명만 가능합니다.", parent=win.newWindow)
         
 #도서 선택 기능 -> 확인 버튼 클릭 시 수행

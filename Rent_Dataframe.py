@@ -58,11 +58,11 @@ class Rent_DF:
         self.re_day = dt.datetime.now().date()
         
         overdue = dt.timedelta()
-        for i in self.rent[self.rent['USER_PHONE']==self.re_user].index:
+        for i in self.existence(self.re_user).index:
             if self.rent.loc[i,'BOOK_ISBN'] in self.re_book:    #선택된 도서만 반납되도록 함
                 self.rent.loc[i, 'RETURN_DATE'] = self.re_day
                 #도서를 반납하는만큼 회원의 도서대출권수를 줄여준다. -> 계산 오류로 인한 수정
-                self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_RENT_CNT'] += -1
+                self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_RENT_CNT'] -= 1
 
                 #대출 정보에 문자열로 저장된 반납예정일 데이터를 date 타입으로 변경
                 self.re_due_day = dt.datetime.strptime(self.rent['RETURN_DUE_DATE'][i], '%Y-%m-%d').date()
@@ -80,10 +80,9 @@ class Rent_DF:
             self.user.loc[self.user['USER_PHONE']==self.re_user, 'USER_WARN']+=1
             return False
 
-    def Rent_replus(self, user_phone):
-        idx = self.rent[self.rent['USER_PHONE']==user_phone].index
-        #print(idx[0])
+    def Rent_replus(self, isbn):
+        info = self.rent[self.rent['BOOK_ISBN']==isbn]
+        idx = info[info['RETURN_DATE'].isna()].index
         re_due_day = dt.datetime.strptime(self.rent.loc[idx[0], 'RETURN_DUE_DATE'], '%Y-%m-%d').date()
         self.rent.loc[idx[0], 'RETURN_DUE_DATE'] = re_due_day+dt.timedelta(days=7)  #연장할 도서 선택
-        #print('연장 완료되었습니다.')
-        #print('반납예정일 : {}'.format((rent.loc[idx[0], 'RETURN_DUE_DATE']).strftime('%Y.%m.%d')))
+        return self.rent.loc[idx[0], 'RETURN_DUE_DATE']
