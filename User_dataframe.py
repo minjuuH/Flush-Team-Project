@@ -12,6 +12,7 @@ class user_dataframe:
     def __init__(self):
         self.data = DataFrame(columns=['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_SEX', 'USER_MAIL',
                                        'USER_IMAGE','USER_RENT_CNT', 'USER_QUIT_DATE', 'USER_RENT_ALW', 'USER_WARN'])
+        self.data.astype({"USER_SEX": bool,'USER_RENT_CNT' : int})
            
 
     #일반 회원 조회
@@ -89,7 +90,7 @@ class user_dataframe:
         else:
             IMAGE = self.info.iloc[0]['USER_IMAGE']
         #탈퇴회원      
-        showit = [self.info.iloc[0]['USER_NAME'], self.info.iloc[0]['USER_BIRTH'], self.info.iloc[0]['USER_PHONE'], sex, self.info.iloc[0]['USER_MAIL'], IMAGE]
+        showit = [self.info.iloc[0]['USER_NAME'], self.info.iloc[0]['USER_BIRTH'], self.info.iloc[0]['USER_PHONE'], sex, self.info.iloc[0]['USER_MAIL'], IMAGE, self.info.iloc[0]['USER_RENT_CNT']]
         return showit
     
     def modiuserinfo(self, phone):
@@ -112,8 +113,12 @@ class user_dataframe:
         if (self.data['USER_PHONE']!=phone).all():
             messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
         
-        if(list[2][3] != '-') & (list[2][8] != '-' ):
-            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(list[2][3] != '-'):
+            if(list[2][8] != '-' ):
+                messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(list[0] == ''):
+            if(list[1] == ''):
+                messagebox.showerror('ERR', '\n이름, 생년월일이\n입력되지 않았습니다.')
         else:
             #입력받은 수정할 데이터
             name = list[0]
@@ -161,6 +166,8 @@ class user_dataframe:
         phonenum = list[2]
         sex  = list[3]
         mail = list[4]
+        if mail == '':
+            mail = '이메일 없음'
         image = list[5]
         if image == '':
             image = '사진등록'
@@ -169,8 +176,14 @@ class user_dataframe:
                              'USER_RENT_CNT': 0})
         if (self.data['USER_PHONE'] == phonenum).any():
             errshow = messagebox.showerror('ERR','\n등록되어 있는 회원입니다.')
-        if(list[2][3] != '-') & (list[2][8] != '-' ):
-            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(name == ''):
+            if(phonenum == ''):
+                if(birth == ''):
+                    messagebox.showerror('ERR', '\n이름, 전화번호, 생년월일이\n입력되지 않았습니다.')
+        elif(phonenum[3] != '-'):
+            if(phonenum[8] != '-' ):
+                messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        
         else:
             ask = messagebox.askquestion('등록', '\n정말 등록하시겠습니까?')
             if ask == 'yes':

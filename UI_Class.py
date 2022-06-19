@@ -335,7 +335,10 @@ class new_window:
         userdata.readcsv()
         showlist = []
         choiceBar = Label(self.base_frame, relief="ridge", bg='white')
+        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
         choiceBar.pack(fill=X)
+        label_bar.pack(fill=X)
+        
 
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
         def quitUser():
@@ -485,7 +488,12 @@ class new_window:
                 a = ud.user_dataframe()
                 a.readcsv()
                 phone = entry.get()
-                a.checkphone(str(phone))
+                if phone == show:
+                    return
+                elif phone == '':
+                    messagebox.showerror("Err", "\n전화번호가 입력되지 않았습니다.")
+                else:
+                    a.checkphone(str(phone))
             overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command = check)
             overlap_bt.grid(row=r, column=5)
             check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
@@ -549,14 +557,15 @@ class new_window:
         female.grid(row=r, column=3, sticky=W)
         
     #회원 대여 도서 목록 출력[회원]
-    def user_rent(self):
-        rentlist = Label(self.Base, text="  \t대여 도서\t\t\t\t대여일\t반납예정일", font=('돋움', 15), anchor=NW)
+    def user_rent(self, booklist):
+        rentlist = Label(self.Base, text="  대여 도서\t\t대여일\t\t반납예정일", font=('돋움', 15), anchor=NW)
         rentlist.pack(fill=X)
         listframe = Frame(self.Base, bg="white")
         listframe.pack(fill=BOTH, expand=True)
         listframe.propagate(0)      #프레임 크기 고정
         self.text_set(listframe)
-        self.info_list('연장')
+        #bt_def에 연장 기능 추가할 예정
+        self.info_list('연장',list = booklist, choice=False, bt_def=None)
           
 #메시지창 띄우는 이벤트
 def msg(showText, win=0):
