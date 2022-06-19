@@ -200,6 +200,7 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
+                    #조건문 -> 다양한 상황에서 출력 서식을 지정
                     if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<2:
                         list[i][j] = list[i][j][:8]+'...'
                     if font_size==13 and len(list[i])>3:
@@ -212,11 +213,10 @@ class new_window:
                     else:
                         if j==0 and len(list[i][0])>3:
                             self.text.insert('end', " {:<28}".format(list[i][j]))
+                        elif j==0 and len(list[i][0])<3:
+                            self.text.insert('end', '{:<32}'.format(list[i][j]))
                         else:
-                            self.text.insert('end', " {:<30}".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
-                    #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
-                    # if j!=len(list[i])-1:
-                    #     self.text.insert('end', "\t\t\t")                
+                            self.text.insert('end', " {:<30}".format(list[i][j]))              
                 if bt_text!=None:
                     if bt_buttonlambda == None and bt_def!=None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=list[i][1],y=list[i][2],z=list[i][3]:bt_def(x,y,z))        # <- 원본
@@ -251,7 +251,14 @@ class new_window:
                 if choice:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
                     self.text.window_create("end", window=cb)
-                self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
+                #한글은 2바이트에 해당한다는 점을 활용하여 이름이 4자일 때, 2자일 때를 구분해서 포맷 지정
+                if len(bt_list[i][0])>3:
+                    self.text.insert('end', '{:<28}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                elif len(bt_list[i][0])<3:
+                    self.text.insert('end', '{:<32}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                else:
+                    self.text.insert('end', '{:<30}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))             #입력할 정보는 추후에 인자로 받아올 것
+                #self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
                 bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x = bt_list[i][2], y = bt_list[i][4]:uv.userwindowinfo(bt_window, x, uc, Quser=y))
                 self.text.window_create('end', window=bt)
                 self.text.insert('end', '\n')
@@ -289,16 +296,6 @@ class new_window:
         label.pack(fill=BOTH, expand=True)
         self.text_set(label, 15)
         self.Book_info_list(book_data, bt_text, 15, command_def, choice)
-    
-    
-    # #도서 목록 출력[도서]
-    # def Book_list(self, bar_text, bt_text, command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
-    #     label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
-    #     label_bar.pack(fill=X)
-    #     label = Label(self.base_frame, relief="ridge", height=37, bg='white')
-    #     label.pack(fill=BOTH, expand=True)
-    #     self.text_set(label, 15)
-    #     self.info_list(bt_text, command_def, font_size=15, choice=choice)
 
     #회원, 도서 목록 리스트 출력[대출]
     def list_print(self, bar_text, list=[]):   #list:출력할 정보 리스트
@@ -316,8 +313,6 @@ class new_window:
         button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=bt_def)
         button.pack(side=LEFT, padx=2, pady=10)
 
-
-
     #회원 목록 출력[회원]
     def User_list(self, bt_text, userlist=None, inwindow = None, command_def = None, check_choice=True, quit_choice = False, t_d=False, uc=None):
         #check_choice:체크버튼 출력 여부를 지정 / quit_choice:탈퇴회원 출력 여부를 지정(탈퇴회원도 출력한다면, 체크버튼으로 탈퇴/일반 회원을 선택할 수 있게 함)
@@ -327,13 +322,7 @@ class new_window:
         userdata.readcsv()
         showlist = []
 
-        choiceBar = Label(self.base_frame, relief="ridge", bg='white')
-        if quit_choice:
-            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
-        else:
-            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
-        choiceBar.pack(fill=X)
-        label_bar.pack(fill=X)
+        choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
         
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
         def quitUser():
@@ -371,7 +360,7 @@ class new_window:
             self.text_set(label, 15)
             self.userinfo_list(bt_text, showlist, inwindow, 15, check_choice, uc=uc)
         else:
-            choiceBar.pack(fill=X, ipady=5)
+            choiceBar.pack(fill=X, ipady=10)
             label = Label(self.base_frame, relief="ridge", height=37, bg='white')
             label.pack(fill=BOTH, expand=True)
             self.text_set(label, 15)
