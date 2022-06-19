@@ -55,10 +55,10 @@ class user_dataframe:
             intext.append([self.data.iloc[i]['USER_NAME'], self.data.iloc[i]['USER_BIRTH'], self.data.iloc[i]['USER_PHONE'], remove, choice])
         return intext
     
-    #검색을 통해 특정 회원만 목록에 표기
+    #검색을 통해 검색어에 포함된 회원을 목록에 표기
     def searchdata(self, searchvalue, want = None):
         if not((self.data['USER_PHONE'].str.contains(searchvalue)).any()) and not((self.data['USER_NAME'].str.contains(searchvalue)).any()):
-            errshow = messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
+            messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
         else:
             self.sch_data = self.data.loc[self.data['USER_PHONE'].str.contains(searchvalue) | self.data['USER_NAME'].str.contains(searchvalue), ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_QUIT_DATE']]
             intext = []
@@ -76,7 +76,18 @@ class user_dataframe:
                 return intext
             else:
                 return info
-                
+    #검색을 통해 검색어에 포함된(탈퇴 제외)회원 목록에 표기
+    def M_D_searchdata(self, searchvalue):
+        if not((self.data['USER_PHONE'].str.contains(searchvalue)).any()) and not((self.data['USER_NAME'].str.contains(searchvalue)).any()):
+            messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
+        else:
+            self.sch_data = self.data.loc[self.data['USER_PHONE'].str.contains(searchvalue) | self.data['USER_NAME'].str.contains(searchvalue), ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_QUIT_DATE']]
+            self.sch_now_data = self.sch_data.loc[self.sch_data['USER_QUIT_DATE'].isnull(), ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_QUIT_DATE']]
+            
+            intext = []
+            for i in range(len(self.sch_now_data)):
+                intext.append([self.sch_now_data.iloc[i]['USER_NAME'],self.sch_now_data.iloc[i]['USER_BIRTH'],self.sch_now_data.iloc[i]['USER_PHONE']])
+            return intext
     #회원 상세 정보(탈퇴회원, 회원 포함)      
     def userinfo(self, phone):
         #showindex = self.data.index[self.data['USER_PHONE'].isin([phone])].tolist()
@@ -112,13 +123,27 @@ class user_dataframe:
     def modidata(self, phone, list):
         if (self.data['USER_PHONE']!=phone).all():
             messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
-        
         elif(list[2][3] != '-'):
             if(list[2][8] != '-' ):
                 messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
         elif(list[0] == ''):
             if(list[1] == ''):
-                messagebox.showerror('ERR', '\n이름, 생년월일이\n입력되지 않았습니다.')
+                if(list[2] == ''):
+                    messagebox.showerror('ERR', '\n이름, 생년월일, 전화번호가\n입력되지 않았습니다.')
+                else:
+                    messagebox.showerror('ERR', '\n이름, 생년월일이\n입력되지 않았습니다.')
+            else:
+                if(list[2] == ''):
+                    messagebox.showerror('ERR', '\n이름, 전화번호가\n입력되지 않았습니다.')
+                else:
+                    messagebox.showerror('ERR', '\n이름이 입력되지 않았습니다.')
+        elif(list[1] == ''):
+            if(list[2] == ''):
+                messagebox.showerror('ERR', '\n생년월일, 전화번호가\n입력되지 않았습니다.')
+            else:
+                messagebox.showerror('ERR', '\n생년월일이\n입력되지 않았습니다.')
+        elif(list[2] == ''):
+            messagebox.showerror('ERR', '\n전화번호가 입력되지 않았습니다.')
         else:
             #입력받은 수정할 데이터
             name = list[0]
@@ -176,14 +201,27 @@ class user_dataframe:
                              'USER_RENT_CNT': 0})
         if (self.data['USER_PHONE'] == phonenum).any():
             errshow = messagebox.showerror('ERR','\n등록되어 있는 회원입니다.')
-        elif(name == ''):
-            if(phonenum == ''):
-                if(birth == ''):
-                    messagebox.showerror('ERR', '\n이름, 전화번호, 생년월일이\n입력되지 않았습니다.')
+        elif(list[0] == ''):
+            if(list[1] == ''):
+                if(list[2] == ''):
+                    messagebox.showerror('ERR', '\n이름, 생년월일, 전화번호가\n입력되지 않았습니다.')
+                else:
+                    messagebox.showerror('ERR', '\n이름, 생년월일이\n입력되지 않았습니다.')
+            else:
+                if(list[2] == ''):
+                    messagebox.showerror('ERR', '\n이름, 전화번호가\n입력되지 않았습니다.')
+                else:
+                    messagebox.showerror('ERR', '\n이름이 입력되지 않았습니다.')
+        elif(list[1] == ''):
+            if(list[2] == ''):
+                messagebox.showerror('ERR', '\n생년월일, 전화번호가\n입력되지 않았습니다.')
+            else:
+                messagebox.showerror('ERR', '\n생년월일이\n입력되지 않았습니다.')
+        elif(list[2] == ''):
+            messagebox.showerror('ERR', '\n전화번호가 입력되지 않았습니다.')
         elif(phonenum[3] != '-'):
             if(phonenum[8] != '-' ):
                 messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
-        
         else:
             ask = messagebox.askquestion('등록', '\n정말 등록하시겠습니까?')
             if ask == 'yes':
