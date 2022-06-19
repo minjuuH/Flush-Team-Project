@@ -160,18 +160,7 @@ class new_window:
         text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
         sb.config(command=text.yview)
         sb.pack(side=RIGHT, fill=Y)
-        text.pack(side=TOP, fill=BOTH, expand=True)
-
-        # if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
-        #     text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
-        #     lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', 13), bg='white', anchor=CENTER, width=90)
-        #     text.window_create("end", window=lb)
-        # else:             #출력할 데이터가 존재할 경우
-            # for i in range(30):
-            #     #cb = Checkbutton(text, text=list, font=('돋움', 13), bg='white')
-            #     cb = Checkbutton(text, bg='white', font=('돋움', font_size))
-            #     text.window_create("end", window=cb)
-            #     text.insert('end', '도서 정보\n')   
+        text.pack(side=TOP, fill=BOTH, expand=True)  
         text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
         lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
         text.window_create("end", window=lb)
@@ -336,12 +325,11 @@ class new_window:
         userdata = ud.user_dataframe()
         userdata.readcsv()
         showlist = []
-        choiceBar = Label(self.base_frame, relief="ridge", bg='white')
-        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
-        choiceBar.pack(fill=X)
-        label_bar.pack(fill=X)
+        choiceBar = Label(self.base_frame, relief="ridge", bg='white',text="\t이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
+        #label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
+        #choiceBar.pack(fill=X, ipady=3)
+        #label_bar.pack(fill=X)
         
-
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
         def quitUser():
             #경우에 따라 데이터를 추가하는 방삭이면 마지막 else 문은 필요 X
@@ -368,6 +356,7 @@ class new_window:
         if quit_choice:
             chk1=IntVar()
             chk2=IntVar()
+            choiceBar.pack(fill=X)
             Check = Checkbutton(choiceBar, text="일반회원", font=('돋움', 13), variable=chk1, bg="white", command=quitUser)
             QuitCheck = Checkbutton(choiceBar, text="탈퇴회원", font=('돋움', 13), variable=chk2, bg="white", command=quitUser)
             Check.pack(side=RIGHT, pady=10)
@@ -377,6 +366,7 @@ class new_window:
             self.text_set(label, 15)
             self.userinfo_list(bt_text, showlist, inwindow, 15, check_choice, uc=uc)
         else:
+            choiceBar.pack(fill=X, ipady=5)
             label = Label(self.base_frame, relief="ridge", height=37, bg='white')
             label.pack(fill=BOTH, expand=True)
             self.text_set(label, 15)
@@ -498,7 +488,7 @@ class new_window:
                     a.checkphone(str(phone))
             overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command = check)
             overlap_bt.grid(row=r, column=5)
-            check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
+            check_overlap = Label(self.Base_Top, text='ex) 010-0000-0000', fg='gray', font=('돋움', 13), bg='white')    #전화번호 입력서식을 지정해줌
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
         if pic:
             def search():
