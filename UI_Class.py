@@ -337,13 +337,13 @@ class new_window:
         userdata = ud.user_dataframe()
         userdata.readcsv()
         showlist = []
-        choiceBar = Label(self.base_frame, relief="ridge", bg='white')
+        #choiceBar = Label(self.base_frame, relief="ridge", bg='white')
         if quit_choice:
-            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
+            choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
         else:
-            label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
-        choiceBar.pack(fill=X)
-        label_bar.pack(fill=X)
+            choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
+        #choiceBar.pack(fill=X)
+        #label_bar.pack(fill=X)
         
 
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
@@ -372,6 +372,7 @@ class new_window:
         if quit_choice:
             chk1=IntVar()
             chk2=IntVar()
+            choiceBar.pack(fill = X)
             Check = Checkbutton(choiceBar, text="일반회원", font=('돋움', 13), variable=chk1, bg="white", command=quitUser)
             QuitCheck = Checkbutton(choiceBar, text="탈퇴회원", font=('돋움', 13), variable=chk2, bg="white", command=quitUser)
             Check.pack(side=RIGHT, pady=10)
@@ -381,6 +382,7 @@ class new_window:
             self.text_set(label, 15)
             self.userinfo_list(bt_text, showlist, inwindow, 15, check_choice, uc=uc)
         else:
+            choiceBar.pack(fill = X)
             label = Label(self.base_frame, relief="ridge", height=37, bg='white')
             label.pack(fill=BOTH, expand=True)
             self.text_set(label, 15)
