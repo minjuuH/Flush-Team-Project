@@ -10,13 +10,12 @@ import Book_def as Bd
 import Book_class as Bc
 import datetime as dt
 
-def search_info(win, t, bt_def=None, bt_button = None, chk:bool=1):
+def search_info(win, t, bt_button = None, chk:bool=1, Uc = None):
     search = win.input_text.get()   #기입창에 입력한 데이터 추출
     user_data = UD.user_dataframe()
     user_data.readcsv()
-    search_data = user_data.searchdata(search, 1)   #search로 데이터 프레임에서 추출한 데이터 저장(추후 수정)
-    win.info_list(t, bt_def, bt_button, 15, chk, 1, list = search_data)
-
+    search_data = user_data.M_D_searchdata(search)   #search로 데이터 프레임에서 추출한 데이터 저장(추후 수정)
+    win.info_list(t, list = search_data, bt_buttonlambda =  bt_button , font_size = 15, choice = chk, text_del = True, uc = Uc)
 def main_menu(window:Tk, uc=None):
     Base = UC.new_window()
     if uc!=None:
@@ -56,7 +55,7 @@ def re_userwindow(window, uc=None):
     window.title('회원 수정')
     u_new_win.Change_Frame('회원 수정')
     
-    u_new_win.Search_bar(S_def=lambda:search_info(u_new_win, '수정', chk =  0, bt_button = [1, u_new_win]))
+    u_new_win.Search_bar(S_def=lambda:search_info(u_new_win, '수정', chk =  False, bt_button = [1, window], Uc = u_new_win))
     u_new_win.User_list('수정',userlist = inlist, check_choice=False, command_def=[1, window], uc=u_new_win) #command_def = [window, 적용시킬 함수내용(1 = 수정, 2 = 탈퇴)] 
 
 #회원 조회창(탈퇴)
@@ -71,7 +70,7 @@ def del_userwindow(window, uc=None):
     window.title('회원 탈퇴')
     u_new_win.Change_Frame('회원 탈퇴')
               
-    u_new_win.Search_bar(S_def = lambda:search_info(u_new_win, '탈퇴', None, [2, u_new_win], 0))
+    u_new_win.Search_bar(S_def = lambda:search_info(u_new_win, '탈퇴', None, [2, window], Uc = u_new_win))
     #u_new_win.createButton('탈퇴', u_new_win.baseLabel)
     u_new_win.User_list('탈퇴',userlist = inlist, check_choice=False, command_def = [2, window], uc=u_new_win)
 
