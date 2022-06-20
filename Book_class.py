@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter.filedialog import *
 import pandas as pd
 import numpy as np
+from soupsieve import select
 from UI_Class import*
 from unicodedata import*
 pd.options.display.max_columns = None
@@ -15,7 +16,7 @@ class Book_DataFrame():
         # 테스트 파일 self.book
         self.book = pd.DataFrame({'BOOK_ISBN':[9788970504773,9791163030911,9788966263301, 9791160507812], 
                     'BOOK_TITLE':['파이썬과 데이터 과학', '점프투파이썬', 'it 지식', '모두의 데이터분석'],
-                    'BOOK_AUTHOR':['천인국, 박동규, 강영민', '박응용', '브라이언', '송석리, 이현아'], 
+                    'BOOK_AUTHOR':['천인국, 박동규', '박응용', '브라이언', '송석리, 이현아'], 
                     'BOOK_PUB':['생능출판사','이지스퍼블리싱','인사이트','길벗'], 
                     'BOOK_PRICE':[26000, 18800, 20000, 19000], 
                     'BOOK_LINK':['http://www.yes24.com','http://www.yes24.com','http://www.yes24.com','http://www.yes24.com'],
@@ -74,10 +75,12 @@ class Book_DataFrame():
 
     # 특정 도서 정보 확인    
     def Book_info(self, select) :
-        intext = []
         data = [self.book_data.loc[self.book_data['BOOK_ISBN'].str.contains(select)]]
-        intext.append(data[1] + '\t\t' + data[2] + '\t\t' + data[3] + '\t\t' + data[1] + '\t\t' + data[5])
-        return intext
+        # intext.append(data[1] + '\t\t' + data[2] + '\t\t' + data[3] + '\t\t' + data[1] + '\t\t' + data[5])
+        return data
+
+
+    # def Select(self) :
 
 
     # 도서 수정
@@ -156,6 +159,14 @@ def set_str(input_s="", max_size=40, fill_char=' '):
 # print(Book_list_all())
 
 
-
-
+#ㅡㅡㅡㅡㅡㅡㅡㅡㅡ 논리 테스트(Select 함수) ㅡㅡㅡㅡㅡㅡㅡㅡ
+# import numpy as np
+# a = np.array([[1,2,3], [4,5,6]])
+# b = []
+# for i in range(len(a)):
+#     b.append({i : a[i][0]})
+# for i in range(len(b)):
+#     #print(b[i].keys())
+#     for j in b[i].values():
+#         print(j)
 
