@@ -177,7 +177,7 @@ def userwindowmodi(window, userphone, uc=None):
     u_new_win.Change_Frame('회원 수정')
     u_new_win.input_set('회원 수정',0 , showimage= modiuserinfo[5])
     nameentry = u_new_win.u_entry_set('이름', 1, True, modiuserinfo[0])
-    birthentry = u_new_win.u_entry_set('생년월일', 2, True, modiuserinfo[1])
+    birthentry = u_new_win.u_entry_set('생년월일', 2, True, modiuserinfo[1], form=1)
     phoneentry = u_new_win.u_entry_set('전화번호', 3, True, modiuserinfo[2], True)
     u_new_win.user_gender('성별', 5, modiuserinfo[3])
     emailentry = u_new_win.u_entry_set('이메일', 6, True, modiuserinfo[4])

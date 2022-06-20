@@ -69,7 +69,7 @@ def createNewWindow_book_m(window, uc=None):
 
     # book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, chk=False))
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, chk=False, bd_win=window, uc=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = book_new_win, uc=book_new_win)
+    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win) #bd_window는 book_new_win이 아닌 window 값을 전달해야 정상 작동됨
 
 
 # 도서조회(삭제)
@@ -83,7 +83,7 @@ def createNewWindow_book_del(window, uc=None):
 
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, lambda : createNewWindow_book_s(window, uc=book_new_win)))
     book_new_win.createButton('삭제', book_new_win.baseLabel, lambda : book_class.Book_del())
-    book_new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", '삭제', book_class.Book_list_all(), lambda : creaNewWindow_book_info_re(window, book_class.Select(), uc=book_new_win), False)
+    book_new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", '삭제', book_class.Book_list_all(), lambda : creaNewWindow_book_info_re(window, book_class.Select(), uc=book_new_win), False,bd_window = window)
 
 
 # 도서 등록 
@@ -140,16 +140,29 @@ def creaNewWindow_book_info_re(window, isbn, uc=None):
     window.title('도서 수정')
     book_new_win.Change_Frame('도서 수정')
 
-    out_data = book_class.Book_info(isbn)
+    def modi_clear():   #완료 버튼 커멘드로 연결할 함수
+        in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), int(price.get()), link.get(), description.get()]
+        print(in_data)
+        book_class.Book_modi(check_isbn=9788970504773, modi_data=in_data)   #현재 isbn 값이 제대로 전달되지 X 임의의 값 지정으로 기능 확인만 완료
+        main_menu(window, uc=book_new_win) #추후에 해당도서 상세정보창으로 이동하도록 변경
+
+    out_data = book_class.Book_info(9788970504773)
     book_new_win.input_set('도서 수정')
-    title = book_new_win.book_entry_set('제목', 1, 1, text_data = out_data[0])
-    author = book_new_win.book_entry_set('저자', 2, 1, text_data = out_data[1])
-    pub = book_new_win.book_entry_set('출판사', 3, 1, text_data = out_data[2])
-    isbn = book_new_win.book_entry_set('ISBN', 4, 1, 1, text_data = out_data[3])
+    #out_data의 순서와 입력칸의 순서가 맞지 않아 제대로 연결되게끔 수정
+    title = book_new_win.book_entry_set('제목', 1, 1, text_data = out_data[1])
+    author = book_new_win.book_entry_set('저자', 2, 1, text_data = out_data[2])
+    pub = book_new_win.book_entry_set('출판사', 3, 1, text_data = out_data[3])
+    isbn = book_new_win.book_entry_set('ISBN', 4, 1, 1, text_data = out_data[0])
     price = book_new_win.book_entry_set('가격', 6, 1, text_data = out_data[4])
     link = book_new_win.book_entry_set('관련링크', 7, 1, text_data = out_data[5])
     description=book_new_win.book_ex(1)
-    in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), int(price.get()), link.get(), description.get()]
-    book_new_win.under_button('완료', book_new_win.base_frame, bt2_def=[book_class.Book_modi(in_data), main_menu(window, uc=book_new_win)])
+
+    #수정한 데이터를 완료 버튼 눌렀을 시에 가져와야 수정된 정보를 반환받을 수 있음->modi_clear에서 해당 기능 수행
+    #수정 전에 굳이 엔트리값을 반환반을 필요는 없어보임
+    # in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), int(price.get()), link.get(), description.get()]
+    # print(in_data)
+
+    #bt3_def를 연결하여 취소버튼을 누르면 메인메뉴로 돌아갈 수 있게 함
+    book_new_win.under_button('완료', book_new_win.base_frame, bt2_def=modi_clear, bt3_def=lambda:main_menu(window, book_new_win))
     
 

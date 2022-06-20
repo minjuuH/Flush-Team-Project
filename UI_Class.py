@@ -162,18 +162,7 @@ class new_window:
         text = Text(frame, width=40, height=20, yscrollcommand=sb.set, font=('돋움', font_size), spacing1=3, spacing2=3, spacing3=3)    #spacing1~3:줄 사이 간격 지정
         sb.config(command=text.yview)
         sb.pack(side=RIGHT, fill=Y)
-        text.pack(side=TOP, fill=BOTH, expand=True)
-
-        # if len(list)==0:  #출력할 데이터가 존재하지 않을 경우
-        #     text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
-        #     lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', 13), bg='white', anchor=CENTER, width=90)
-        #     text.window_create("end", window=lb)
-        # else:             #출력할 데이터가 존재할 경우
-            # for i in range(30):
-            #     #cb = Checkbutton(text, text=list, font=('돋움', 13), bg='white')
-            #     cb = Checkbutton(text, bg='white', font=('돋움', font_size))
-            #     text.window_create("end", window=cb)
-            #     text.insert('end', '도서 정보\n')   
+        text.pack(side=TOP, fill=BOTH, expand=True)  
         text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
         lb = Label(text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
         text.window_create("end", window=lb)
@@ -212,6 +201,7 @@ class new_window:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
                 for j in range(len(list[i])):
+                    #조건문 -> 다양한 상황에서 출력 서식을 지정
                     if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<2:
                         list[i][j] = list[i][j][:8]+'...'
                     if font_size==13 and len(list[i])>3:
@@ -224,11 +214,10 @@ class new_window:
                     else:
                         if j==0 and len(list[i][0])>3:
                             self.text.insert('end', " {:<28}".format(list[i][j]))
+                        elif j==0 and len(list[i][0])<3:
+                            self.text.insert('end', '{:<32}'.format(list[i][j]))
                         else:
-                            self.text.insert('end', " {:<30}".format(list[i][j]))             #입력할 정보는 추후에 인자로 받아올 것
-                    #줄이 넘어가는 것을 방지하기 위해 마지막 데이터 뒤에는 "\t\t\t"을 삽입하지 않도록 설정
-                    # if j!=len(list[i])-1:
-                    #     self.text.insert('end', "\t\t\t")                
+                            self.text.insert('end', " {:<30}".format(list[i][j]))              
                 if bt_text!=None:
                     if bt_buttonlambda == None and bt_def!=None:
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=list[i][1],y=list[i][2],z=list[i][3]:bt_def(x,y,z))        # <- 원본
@@ -263,7 +252,14 @@ class new_window:
                 if choice:
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
                     self.text.window_create("end", window=cb)
-                self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
+                #한글은 2바이트에 해당한다는 점을 활용하여 이름이 4자일 때, 2자일 때를 구분해서 포맷 지정
+                if len(bt_list[i][0])>3:
+                    self.text.insert('end', '{:<28}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                elif len(bt_list[i][0])<3:
+                    self.text.insert('end', '{:<32}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                else:
+                    self.text.insert('end', '{:<30}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))             #입력할 정보는 추후에 인자로 받아올 것
+                #self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
                 bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x = bt_list[i][2], y = bt_list[i][4]:uv.userwindowinfo(bt_window, x, uc, Quser=y))
                 self.text.window_create('end', window=bt)
                 self.text.insert('end', '\n')
@@ -290,21 +286,26 @@ class new_window:
 
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(out_data)):
+                #현재 out_data는 2차원 리스트가 아님 -> out_data를 2차원 리스트로 전달 받고 출력 형식 수정해야함
                 select_data.append({i : out_data[i][0]}) # 각 데이터 마다 고유 번호(순서, isbn) 저장
                 if choice:      # 체크박스
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
                     self.text.window_create("end", window=cb)
                 
-                self.text.insert('end', out_data[i])          #입력할 정보는 추후에 인자로 받아올 것
+                self.text.insert('end', out_data[i])          #out_data를 2차원리스트로 받게되면 해당 코드 수정해야함
                 
                 if bt_text!=None:       # 버튼
                     self.text.insert('end', ' ')
                     if bt_text == '수정':
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=[bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc)])
+                        #수정전 command가 람다식 지정 없이 매개변수 있는 함수로 지정되어 버튼을 누를 경우 커맨드함수가 실행되는 것이 아닌 버튼이 배치됨과 동시에 함수가 실행됨
+                        #람다식으로 지정하여 버튼을 눌렀을 때 해당 커맨드가 실행되게 수정
+                        #현재 알맞는 isbn이 전달되지 X 수정 필요
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc))
                         self.text.window_create('end', window=bt)
 
                     elif bt_text == '삭제' :
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=[bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc), command_def])
+                        #현재 수정화면을 출력하는 함수가 커맨드로 연결 -> 도서를 삭제해주는 커맨드로 수정해야함
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc))
                         self.text.window_create('end', window=bt)
 
                     else :
@@ -324,8 +325,6 @@ class new_window:
         label.pack(fill=BOTH, expand=True)
         self.text_set(label, 15)
         self.Book_info_list(book_data, bt_text, command_def, 15, choice, bd_window, uc)
-    
-    
 
     #회원, 도서 목록 리스트 출력[대출]
     def list_print(self, bar_text, list=[]):   #list:출력할 정보 리스트
@@ -343,8 +342,6 @@ class new_window:
         button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=bt_def)
         button.pack(side=LEFT, padx=2, pady=10)
 
-
-
     #회원 목록 출력[회원]
     def User_list(self, bt_text, userlist=None, inwindow = None, command_def = None, check_choice=True, quit_choice = False, t_d=False, uc=None):
         #check_choice:체크버튼 출력 여부를 지정 / quit_choice:탈퇴회원 출력 여부를 지정(탈퇴회원도 출력한다면, 체크버튼으로 탈퇴/일반 회원을 선택할 수 있게 함)
@@ -353,15 +350,9 @@ class new_window:
         userdata = ud.user_dataframe()
         userdata.readcsv()
         showlist = []
-        #choiceBar = Label(self.base_frame, relief="ridge", bg='white')
-        if quit_choice:
-            choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t생년월일\t\t전화번호     ", font=('돋움', 15), anchor=W)
-        else:
-            choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
-        #choiceBar.pack(fill=X)
-        #label_bar.pack(fill=X)
-        
 
+        choiceBar = Label(self.base_frame, relief="ridge", bg='white', text="   이름\t\t\t생년월일\t\t\t전화번호", font=('돋움', 15), anchor=W)
+        
         #체크 여부에 따라 회원 출력 목록을 지정해 줄 함수
         def quitUser():
             #경우에 따라 데이터를 추가하는 방삭이면 마지막 else 문은 필요 X
@@ -388,7 +379,7 @@ class new_window:
         if quit_choice:
             chk1=IntVar()
             chk2=IntVar()
-            choiceBar.pack(fill = X)
+            choiceBar.pack(fill=X)
             Check = Checkbutton(choiceBar, text="일반회원", font=('돋움', 13), variable=chk1, bg="white", command=quitUser)
             QuitCheck = Checkbutton(choiceBar, text="탈퇴회원", font=('돋움', 13), variable=chk2, bg="white", command=quitUser)
             Check.pack(side=RIGHT, pady=10)
@@ -398,7 +389,7 @@ class new_window:
             self.text_set(label, 15)
             self.userinfo_list(bt_text, showlist, inwindow, 15, check_choice, uc=uc)
         else:
-            choiceBar.pack(fill = X)
+            choiceBar.pack(fill=X, ipady=10)
             label = Label(self.base_frame, relief="ridge", height=37, bg='white')
             label.pack(fill=BOTH, expand=True)
             self.text_set(label, 15)
@@ -516,7 +507,7 @@ class new_window:
                     a.checkphone(str(phone))
             overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command = check)
             overlap_bt.grid(row=r, column=5)
-            check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
+            check_overlap = Label(self.Base_Top, text='ex) 010-0000-0000', fg='gray', font=('돋움', 13), bg='white')    #전화번호 입력서식을 지정해줌
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
         if pic:
             def search():
