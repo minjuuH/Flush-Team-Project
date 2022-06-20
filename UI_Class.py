@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 import Book_class as bc
+import Book_def as bd
 import User_dataframe as ud
 import User_View as uv
 import pandas as pd
@@ -266,36 +267,64 @@ class new_window:
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함 << 회원 조회창에 있는 검색바 지우고 여기에 추가해서 넣었습니다.
     
     # 도서 데이터 출력 - 메인 UI_Class에 없는 함수
-    def Book_info_list(self, out_data, bt_text=None, font_size=13, command_def=None, choice=True, text_del=True) :
+    def Book_info_list(self, out_data, bt_text=None, command_def=None, font_size=13, choice=True, bd_window=None ,uc=None, text_del=True) :
+        # 수정/삭제 버튼 눌렸을 때 해당 데이터프레임 선택
+        def Select(select_data, index):
+            sel_val = select_data[index].values()
+            return sel_val
+
         if text_del:
             self.text.config(state=NORMAL)
             self.text.delete('1.0', 'end')
+                
+        select_data = [] # isbn값 저장받을 빈 리스트
 
-        if len(out_data)==0:  #출력할 데이터가 존재하지 않을 경우
+        if len(out_data)==0:  #출력 할 데이터가 존재하지 않을 경우
             self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
             lb = Label(self.text, text='등록된 정보가 없습니다.', font=('돋움', font_size), bg='white', anchor=CENTER, width=90)
             self.text.window_create("end", window=lb)
 
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(out_data)):
-                if choice:
+                #현재 out_data는 2차원 리스트가 아님 -> out_data를 2차원 리스트로 전달 받고 출력 형식 수정해야함
+                select_data.append({i : out_data[i][0]}) # 각 데이터 마다 고유 번호(순서, isbn) 저장
+                if choice:      # 체크박스
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
                     self.text.window_create("end", window=cb)
-                self.text.insert('end', out_data[i])             #입력할 정보는 추후에 인자로 받아올 것
-                if bt_text!=None:
-                    bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=command_def)
-                    self.text.window_create('end', window=bt)
+                
+                self.text.insert('end', out_data[i])          #out_data를 2차원리스트로 받게되면 해당 코드 수정해야함
+                
+                if bt_text!=None:       # 버튼
+                    self.text.insert('end', ' ')
+                    if bt_text == '수정':
+                        #수정전 command가 람다식 지정 없이 매개변수 있는 함수로 지정되어 버튼을 누를 경우 커맨드함수가 실행되는 것이 아닌 버튼이 배치됨과 동시에 함수가 실행됨
+                        #람다식으로 지정하여 버튼을 눌렀을 때 해당 커맨드가 실행되게 수정
+                        #현재 알맞는 isbn이 전달되지 X 수정 필요
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc))
+                        self.text.window_create('end', window=bt)
+
+                    elif bt_text == '삭제' :
+                        #현재 수정화면을 출력하는 함수가 커맨드로 연결 -> 도서를 삭제해주는 커맨드로 수정해야함
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc))
+                        self.text.window_create('end', window=bt)
+
+                    else :
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=command_def)
+                        self.text.window_create('end', window=bt)
+                    
                 self.text.insert('end', '\n')
+
         self.text.configure(state=DISABLED)  #텍스트를 수정하지 못하게 상태 변경
 
+    # (out_data, command_def, bt_text=None, bd_window=None ,font_size=13, uc=None, choice=True, text_del=True) :
     #도서 목록 출력[도서]
-    def Book_list(self, bar_text, bt_text, book_data,command_def=None, choice=True):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
+    def Book_list(self, bar_text, bt_text, book_data, command_def=None, choice=True, bd_window=None, uc=None):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
         label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
         label_bar.pack(fill=X)
         label = Label(self.base_frame, relief="ridge", height=37, bg='white')
         label.pack(fill=BOTH, expand=True)
         self.text_set(label, 15)
-        self.Book_info_list(book_data, bt_text, 15, command_def, choice)
+        self.Book_info_list(book_data, bt_text, command_def, 15, choice, bd_window, uc)
 
     #회원, 도서 목록 리스트 출력[대출]
     def list_print(self, bar_text, list=[]):   #list:출력할 정보 리스트
@@ -429,11 +458,7 @@ class new_window:
         book_class = bc.Book_DataFrame()
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)     #sticky : 지정된 칸 크기가 위젯 크기보다 클 경우, 정렬 방식을 지정
-        if t == '가격' or t == 'ISBN':
-            get_data = IntVar()
-
-        else:
-            get_data = StringVar()
+        get_data = StringVar()
         entry = Entry(self.Base_Top, width=55, textvariable= get_data, font=('돋움', 13), relief='solid', bd=1)
         if re_choice:
             entry.insert(0, text_data) #차후에 전달받은 데이터를 출력하는 것으로 변경
@@ -504,12 +529,13 @@ class new_window:
         info.grid(row=r, column=2, padx=10, ipady=3, columnspan=3)
 
     #도서 설명 입력칸[도서]
-    def book_ex(self, re_choice=False, op_choice=False):
+    def book_ex(self, bf_data, re_choice=False, op_choice=False):
         info_label = Label(self.Base_Bottom, text='도서 설명', font=('돋움', 15), bg='white')
         info_label.pack(anchor=NW, padx=30, pady=10)
         entry = Entry(self.Base_Bottom, width=100, font=('돋움', 13), relief='solid', bd=1)
         if re_choice:
             entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
+            # entry.insert(0, bf_data) #차후에 전달받은 데이터를 출력하는 것으로 변경
         if op_choice:
             entry.config(state=DISABLED)
         entry.pack(fill=X, padx=30, ipady=70)
