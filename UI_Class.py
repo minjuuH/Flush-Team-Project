@@ -215,7 +215,7 @@ class new_window:
                         if j==0 and len(list[i][0])>3:
                             self.text.insert('end', " {:<28}".format(list[i][j]))
                         elif j==0 and len(list[i][0])<3:
-                            self.text.insert('end', '{:<32}'.format(list[i][j]))
+                            self.text.insert('end', ' {:<32}'.format(list[i][j]))
                         else:
                             self.text.insert('end', " {:<30}".format(list[i][j]))              
                 if bt_text!=None:
@@ -229,7 +229,7 @@ class new_window:
     #추가해야하는 기능 : 검색했을 때 출력된 텍스트 목록 비우고 검색된 정보만 출력하도록 설정/출력할 정보를 인자로 받아야함
  
     
-    def userButton(self,window, showText, font_size,def_info, phone, uc = None):
+    def userButton(self,window, showText, font_size,def_info=[], phone=None, uc = None):
         if def_info[0] == 1:
             button = Button(window, text=showText, font=('돋움', font_size-3), command=lambda x=def_info[1], y = phone:uv.userwindowmodi(x, y, uc))
             return button
@@ -254,11 +254,11 @@ class new_window:
                     self.text.window_create("end", window=cb)
                 #한글은 2바이트에 해당한다는 점을 활용하여 이름이 4자일 때, 2자일 때를 구분해서 포맷 지정
                 if len(bt_list[i][0])>3:
-                    self.text.insert('end', '{:<28}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                    self.text.insert('end', ' {:<28}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
                 elif len(bt_list[i][0])<3:
-                    self.text.insert('end', '{:<32}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
+                    self.text.insert('end', ' {:<32}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))
                 else:
-                    self.text.insert('end', '{:<30}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))             #입력할 정보는 추후에 인자로 받아올 것
+                    self.text.insert('end', ' {:<30}{:<30}{:<30}{:<8}'.format(bt_list[i][0],bt_list[i][1],bt_list[i][2],bt_list[i][3]))             #입력할 정보는 추후에 인자로 받아올 것
                 #self.text.insert('end', bt_list[i][0]+'\t\t'+bt_list[i][1]+'\t\t'+bt_list[i][2]+'\t\t'+bt_list[i][3])             #입력할 정보는 추후에 인자로 받아올 것
                 bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x = bt_list[i][2], y = bt_list[i][4]:uv.userwindowinfo(bt_window, x, uc, Quser=y))
                 self.text.window_create('end', window=bt)

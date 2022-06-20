@@ -70,7 +70,7 @@ def del_userwindow(window, uc=None):
     window.title('회원 탈퇴')
     u_new_win.Change_Frame('회원 탈퇴')
               
-    u_new_win.Search_bar(S_def = lambda:search_info(u_new_win, '탈퇴', None, [2, window], Uc = u_new_win))
+    u_new_win.Search_bar(S_def = lambda:search_info(u_new_win, '탈퇴', chk=0, bt_button=[2, window], Uc = u_new_win))
     #u_new_win.createButton('탈퇴', u_new_win.baseLabel)
     u_new_win.User_list('탈퇴',userlist = inlist, check_choice=False, command_def = [2, window], uc=u_new_win)
 
@@ -121,8 +121,6 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
         re_day = dt.datetime.strptime(re_day, '%Y-%m-%d').date()
         overdue = re_day-dt.datetime.today().date()
 
-        print(re_day-dt.timedelta(days=7))
-
         if overdue < dt.timedelta(0):
             messagebox.showerror('도서관리시스템','연체된 도서는 연장할 할 수 없습니다.')
         #연장한 전적이 있는 도서일 경우
@@ -131,8 +129,8 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
         else:
             re_day = rent_info.Rent_replus(isbn)
             rent_info.to_csv()
-            messagebox.showinfo('도서관리시스템','연장되었습니다\n반납예정일 : {}'.format((re_day).strftime('%Y.%m.%d')))
-            showbook = make_list()            
+            messagebox.showinfo('도서관리시스템','연장되었습니다\n반납예정일 : {}'.format(re_day))
+            showbook = make_list()          
             u_new_win.info_list(bt_def=replus, list=showbook, text_del=1, bt_text='연장', font_size=15, choice=False)
 
 

@@ -84,5 +84,5 @@ class Rent_DF:
         info = self.rent[self.rent['BOOK_ISBN']==isbn]
         idx = info[info['RETURN_DATE'].isna()].index
         re_due_day = dt.datetime.strptime(self.rent.loc[idx[0], 'RETURN_DUE_DATE'], '%Y-%m-%d').date()
-        self.rent.loc[idx[0], 'RETURN_DUE_DATE'] = re_due_day+dt.timedelta(days=7)  #연장할 도서 선택
+        self.rent.loc[idx[0], 'RETURN_DUE_DATE'] = (re_due_day+dt.timedelta(days=7)).strftime('%Y-%m-%d')  #연장할 도서 선택
         return self.rent.loc[idx[0], 'RETURN_DUE_DATE']
