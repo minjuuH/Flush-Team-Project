@@ -1,26 +1,28 @@
 from tkinter import *
 from tkinter import messagebox
-
-from soupsieve import select
 import UI_Class as UC
 import Book_class as BC
 import Rent_View as rv
 import User_View as uv
 
-def search_info(win, chk=True, bd_win=None, UC=None): # bt_def=None, 
+def search_info(win, choice, chk=True, bd_win=None, UC=None): # bt_def=None, 
     book_data = BC.Book_DataFrame()
+    book_data.readcsv()
     search = win.input_text.get()   #기입창에 입력한 데이터 추출
     search_data = book_data.Book_Search(search)   #search로 데이터 프레임에서 추출한 데이터 저장(추후 수정)
-    win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
+    if choice == '조회':
+        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
 
+    elif choice == '수정':
+        win.Book_info_list(search_data, bt_text=choice, bd_window=bd_win, font_size=15, uc=UC, choice=chk)
 
-def select_data(win, out_data) :
-    book_data = BC.Book_DataFrame()
-    select_val = win.select_data
-    def Select(select_data, index):
-        sel_val = select_data[index].values()
-        return sel_val
-    select_val = Select(select_val, 0)
+    elif choice == '삭제':
+        win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '삭제', book_data.Book_list_all(), choice = False, bd_window = bd_win, uc=UC)
+
+    else:
+        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
+
+        
 
 
 def main_menu(window:Tk, uc=None):
@@ -43,17 +45,20 @@ def main_menu(window:Tk, uc=None):
 # 도서조회 
 def createNewWindow_book_s(window, uc=None):
     book_new_win = UC.new_window()
-    book_data = BC.Book_DataFrame()
+    book_class = BC.Book_DataFrame()
+    book_class.readcsv()
+    
     if uc != None:
         book_new_win=uc
 
     window.title('도서 조회')
     book_new_win.Change_Frame('도서 조회')
 
-    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win))
+    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '조회'))
     book_new_win.createButton('대출', book_new_win.baseLabel, lambda : rv.Rent_Screen(window, uc=book_new_win))
     book_new_win.createButton('등록', book_new_win.baseLabel, lambda: createNewWindow_book_r(window, uc=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", None, book_data.Book_list_all())
+    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", None, book_class.Book_list_all())
+    # book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '확인', book_class.Book_list_all())
 
 
 
@@ -61,6 +66,8 @@ def createNewWindow_book_s(window, uc=None):
 def createNewWindow_book_m(window, uc=None):
     book_new_win = UC.new_window()
     book_class = BC.Book_DataFrame()
+    book_class.readcsv()
+
     if uc != None:
         book_new_win=uc
 
@@ -68,8 +75,8 @@ def createNewWindow_book_m(window, uc=None):
     book_new_win.Change_Frame('도서 수정')
 
     # book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, chk=False))
-    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, chk=False, bd_win=window, uc=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win) #bd_window는 book_new_win이 아닌 window 값을 전달해야 정상 작동됨
+    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '수정', chk=False, bd_win=window, UC=book_new_win))
+    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
 
 
 # 도서조회(삭제)
@@ -90,11 +97,19 @@ def createNewWindow_book_del(window, uc=None):
 def createNewWindow_book_r(window, uc=None):
     book_new_win = UC.new_window()
     book_class = BC.Book_DataFrame()
+    book_class.readcsv()
+
     if uc != None:
         book_new_win=uc
 
     window.title('도서 등록')
     book_new_win.Change_Frame('도서 등록')
+
+    def book_add() :
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
+        book_class.Book_in(in_data)
+        book_class.tocsv()
+        main_menu(window, uc=book_new_win)
 
     book_new_win.input_set('도서 등록')
     title = book_new_win.book_entry_set('제목', 1)
@@ -104,8 +119,7 @@ def createNewWindow_book_r(window, uc=None):
     price = book_new_win.book_entry_set('가격', 6)
     link = book_new_win.book_entry_set('관련링크', 7)
     description = book_new_win.book_ex()
-    in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
-    book_new_win.under_button('등록', book_new_win.base_frame, bt2_def=lambda:[book_class.Book_in(in_data), main_menu(window, uc=book_new_win)], bt3_def=lambda : main_menu(window, uc=book_new_win))
+    book_new_win.under_button('등록', book_new_win.base_frame, bt2_def=lambda:[book_add, main_menu(window, uc=book_new_win)], bt3_def=lambda : main_menu(window, uc=book_new_win))
 
 # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -130,7 +144,7 @@ def creaNewWindow_book_info(window, isbn, uc=None):
     book_new_win.under_button('삭제', book_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:creaNewWindow_book_info_re(window, uc=book_new_win))
 
 # 도서 정보 수정
-def creaNewWindow_book_info_re(window, isbn, uc=None):
+def creaNewWindow_book_info_re(window, ISBN, uc=None):
     book_new_win = UC.new_window()
     book_class = BC.Book_DataFrame()
     
@@ -140,13 +154,13 @@ def creaNewWindow_book_info_re(window, isbn, uc=None):
     window.title('도서 수정')
     book_new_win.Change_Frame('도서 수정')
 
-    def modi_clear():   #완료 버튼 커멘드로 연결할 함수
+    def modi_clear(c_isbn):   #완료 버튼 커멘드로 연결할 함수
         in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), int(price.get()), link.get(), description.get()]
-        print(in_data)
-        book_class.Book_modi(check_isbn=9788970504773, modi_data=in_data)   #현재 isbn 값이 제대로 전달되지 X 임의의 값 지정으로 기능 확인만 완료
+        # print(in_data)
+        book_class.Book_modi(check_isbn=c_isbn, modi_data=in_data)   #현재 isbn 값이 제대로 전달되지 X 임의의 값 지정으로 기능 확인만 완료
         main_menu(window, uc=book_new_win) #추후에 해당도서 상세정보창으로 이동하도록 변경
 
-    out_data = book_class.Book_info(9788970504773)
+    out_data = book_class.Book_info(ISBN)
     book_new_win.input_set('도서 수정')
     #out_data의 순서와 입력칸의 순서가 맞지 않아 제대로 연결되게끔 수정
     title = book_new_win.book_entry_set('제목', 1, 1, text_data = out_data[1])
@@ -163,6 +177,6 @@ def creaNewWindow_book_info_re(window, isbn, uc=None):
     # print(in_data)
 
     #bt3_def를 연결하여 취소버튼을 누르면 메인메뉴로 돌아갈 수 있게 함
-    book_new_win.under_button('완료', book_new_win.base_frame, bt2_def=modi_clear, bt3_def=lambda:main_menu(window, book_new_win))
+    book_new_win.under_button('완료', book_new_win.base_frame, bt2_def=modi_clear(ISBN), bt3_def=lambda:main_menu(window, book_new_win))
     
 
