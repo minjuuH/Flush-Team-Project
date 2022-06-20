@@ -4,7 +4,6 @@ from tkinter import ttk
 from tkinter.filedialog import *
 import pandas as pd
 import numpy as np
-from soupsieve import select
 from UI_Class import*
 from unicodedata import*
 pd.options.display.max_columns = None

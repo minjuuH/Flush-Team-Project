@@ -1,7 +1,5 @@
 from tkinter import *
 from tkinter import messagebox
-
-from soupsieve import select
 import UI_Class as UC
 import Book_class as BC
 import Rent_View as rv

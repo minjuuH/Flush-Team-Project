@@ -7,7 +7,6 @@ import UI_Class as UC
 import Rent_Dataframe as RD
 import Rent_View as rv
 import Book_def as Bd
-import Book_class as Bc
 import datetime as dt
 
 def search_info(win, t, bt_button = None, chk:bool=1, Uc = None):
