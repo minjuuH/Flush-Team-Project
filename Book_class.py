@@ -75,9 +75,15 @@ class Book_DataFrame():
 
     # 특정 도서 정보 확인    
     def Book_info(self, select) :
-        data = [self.book_data.loc[self.book_data['BOOK_ISBN'].str.contains(select)]]
+        data = self.book_data.loc[self.book_data['BOOK_ISBN']==select]  #isbn은 int형으로 str.contain을 사용하면 오류 발생->논리적인덱싱으로 변경
+        idx = data.index    #isbn에 따라 인덱스값이 다르기 때문에 index로 찾은 도서 정보의 인덱스 값을 추출
+        intext = list()
+        #Book_def의 정보수정함수에서 out_data에서 값을 하나씩 꺼내오는 식으로 설정되어있었음
+        #해당 기능이 정상적으로 수행되게 반환되는 리스트에 값을 하나씩 append 해줌
+        for i in data:
+            intext.append(data.loc[idx[0],i])
         # intext.append(data[1] + '\t\t' + data[2] + '\t\t' + data[3] + '\t\t' + data[1] + '\t\t' + data[5])
-        return data
+        return intext
 
 
     # def Select(self) :
@@ -86,10 +92,12 @@ class Book_DataFrame():
     # 도서 수정
     def Book_modi(self, check_isbn, modi_data=[]) :
         # check_isbn : 기존 데이터 입력받아 해당 데이터 지정
-        isbn=modi_data[0]
-        title=modi_data[1]
-        author=modi_data[2]
-        pub=modi_data[3]
+
+        #modi_data의 원소들이 알맞은 변수에 지정될 수 있도록 수정
+        isbn=modi_data[3]
+        title=modi_data[0]
+        author=modi_data[1]
+        pub=modi_data[2]
         price=modi_data[4]
         link=modi_data[5]
         # image=modi_data[6]
@@ -102,7 +110,7 @@ class Book_DataFrame():
 
             if ans:    
                 self.book_data.loc[(self.book_data['BOOK_ISBN']==check_isbn), ('BOOK_ISBN', 'BOOK_TITLE', 'BOOK_AUTHOR', 'BOOK_PUB', 'BOOK_PRICE', 'BOOK_LINK', 'BOOK_DESCRIPTION')] = (isbn, title, author, pub, price, link, description)
-                self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)
+                # self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)  #현재 테스트용의 데이터를 사용하고 있으므로 추후 csv 파일을 연결하면 해당 코드 활성화
                 messagebox.showinfo('도서관리프로그램', '도서가 수정되었습니다.')
 
             else:
