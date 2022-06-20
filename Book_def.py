@@ -57,7 +57,7 @@ def createNewWindow_book_s(window, uc=None):
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '조회'))
     book_new_win.createButton('대출', book_new_win.baseLabel, lambda : rv.Rent_Screen(window, uc=book_new_win))
     book_new_win.createButton('등록', book_new_win.baseLabel, lambda: createNewWindow_book_r(window, uc=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", None, book_class.Book_list_all())
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), None, book_class.Book_list_all())
     # book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '확인', book_class.Book_list_all())
 
 
@@ -76,7 +76,7 @@ def createNewWindow_book_m(window, uc=None):
 
     # book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, chk=False))
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '수정', chk=False, bd_win=window, UC=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
 
 
 # 도서조회(삭제)
@@ -90,7 +90,7 @@ def createNewWindow_book_del(window, uc=None):
 
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, lambda : createNewWindow_book_s(window, uc=book_new_win)))
     book_new_win.createButton('삭제', book_new_win.baseLabel, lambda : book_class.Book_del())
-    book_new_win.Book_list("제목\t\t저자\t\t출판사\t\tISBN\t\t", '삭제', book_class.Book_list_all(), lambda : creaNewWindow_book_info_re(window, book_class.Select(), uc=book_new_win), False,bd_window = window)
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '삭제', book_class.Book_list_all(), command_def=lambda : creaNewWindow_book_info_re(window, book_class.Select(), uc=book_new_win), choice=False,bd_window = window)
 
 
 # 도서 등록 
