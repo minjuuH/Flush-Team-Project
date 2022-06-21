@@ -178,7 +178,7 @@ def userwindowmodi(window, userphone, uc=None):
     phoneentry = u_new_win.u_entry_set('전화번호', 3, True, modiuserinfo[2], True)
     u_new_win.user_gender('성별', 5, modiuserinfo[3])
     emailentry = u_new_win.u_entry_set('이메일', 6, True, modiuserinfo[4])
-    imageentry = u_new_win.u_entry_set('회원사진', 7, show= modiuserinfo[5], pic=True)
+    imageentry = u_new_win.u_entry_set('회원사진', 7, True, show= modiuserinfo[5], pic=True)
     
     def modiuserdata():
         modidata = [nameentry.get(), birthentry.get(), phoneentry.get(), u_new_win.gender, emailentry.get(), str(imageentry.get())]

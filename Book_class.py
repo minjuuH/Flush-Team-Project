@@ -1,3 +1,4 @@
+from email import message
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -47,7 +48,7 @@ class Book_DataFrame():
         return intext
 
     # 도서 등록
-    def Book_in(self, in_data) :
+    def Book_in(self, in_data=[]) :
         isbn=in_data[3] 
         title=in_data[0] 
         author=in_data[1] 
@@ -55,18 +56,102 @@ class Book_DataFrame():
         price=in_data[4] 
         link=in_data[5] 
         description=in_data[6]
-        new_data = pd.DataFrame([{'BOOK_ISBN' : [isbn], 'BOOK_TITLE' : [title], 'BOOK_AUTHOR' : [author], 'BOOK_PUB' : [pub], 'BOOK_PRICE' :[price], 'BOOK_LINK' : [link], 'BOOK_DESCRIPTION' : [description]}])
         
         if isbn in self.book_data['BOOK_ISBN'] : # 이미 중복확인을 했음에도 중복 ISBN으로 등록했을 경우
             messagebox.showinfo('도서관리프로그램', '이미 등록되어있는 도서입니다.')
+        
+        elif in_data[0] == '':      # 정보 미입력 예외처리
+            if in_data[1] == '':
+                if in_data[2] == '':
+                    if in_data[3] == '':
+                        if in_data[4] == '':
+                            if in_data[5] == '':
+                                if in_data[6] == '':
+                                    messagebox.showerror('도서관리프로그램', '모든 정보를 입력해주세요')
+                                else:
+                                    messagebox.showerror('도서관리프로그램', '제목, 저자, 출판사, ISBN, 가격, 관련링크를 입력해주세요')
+                            else:
+                                messagebox.showerror('도서관리프로그램', '제목, 저자, 출판사, ISBN, 가격을 입력해주세요')
+                        else:
+                            messagebox.showerror('도서관리프로그램', '제목, 저자, 출판사를 입력해주세요')
+                    else:
+                        messagebox.showerror('도서관리프로그램', '제목, 저자를 입력해주세요')
+                else:
+                    messagebox.showerror('도서관리프로그램', '제목을 입력해주세요')
+
+        elif in_data[1] == '':      # 제목 입력 됨
+            if in_data[2] == '':
+                if in_data[3] == '':
+                    if in_data[4] == '':
+                        if in_data[5] == '':
+                            if in_data[6] == '':
+                                messagebox.showerror('도서관리프로그램', '저자, 출판사, ISBN, 가격, 관련링크, 도서 설명을 입력해주세요')
+                            else:
+                                messagebox.showerror('도서관리프로그램', '저자, 출판사, ISBN, 가격, 관련링크를 입력해주세요')
+                        else:
+                            messagebox.showerror('도서관리프로그램', '저자, 출판사, ISBN, 가격을 입력해주세요')
+                    else:
+                        messagebox.showerror('도서관리프로그램', '저자, 출판사, ISBN을 입력해주세요')
+                else: 
+                    messagebox.showerror('도서관리프로그램', '저자, 출판사를 입력해주세요')
+            else:
+                messagebox.showerror('도서관리프로그램', '저자를 입력해주세요')
+
+        elif in_data[2] == '':      # 제목, 저자 입력 됨
+            if in_data[3] == '':
+                if in_data[4] == '':
+                    if in_data[5] == '':
+                        if in_data[6] == '':
+                            messagebox.showerror('도서관리프로그램', '출판사, ISBN, 가격, 관련링크, 도서 설명을 입력해주세요')
+                        else:
+                            messagebox.showerror('도서관리프로그램', '출판사, ISBN, 가격, 관련링크를 입력해주세요')
+                    else:
+                        messagebox.showerror('도서관리프로그램', '출판사, ISBN, 가격을 입력해주세요')
+                else:
+                    messagebox.showerror('도서관리프로그램', '출판사, ISBN을 입력해주세요')
+            else:
+                messagebox.showerror('도서관리프로그램', '출판사를 입력해주세요')
+
+        elif in_data[3] == '':      # 제목, 저자, 출판사
+            if in_data[4] == '':
+                if in_data[5] == '':
+                    if in_data[6] == '':
+                        messagebox.showerror('도서관리프로그램', 'ISBN, 가격, 관련링크, 도서 설명을 입력해주세요')
+                    else:
+                        messagebox.showerror('도서관리프로그램', 'ISBN, 가격, 관련링크를 입력해주세요')
+                else:
+                    messagebox.showerror('도서관리프로그램', 'ISBN, 가격를 입력해주세요')
+            else:
+                messagebox.showerror('도서관리프로그램', 'ISBN을 입력해주세요')
+        
+        elif in_data[4] == '':      # 제목, 저자, 출판사, ISBN
+            if in_data[5] == '':
+                if in_data[6] == '':
+                    messagebox.showerror('도서관리프로그램', '가격, 관련링크, 도서 설명을 입력해주세요')
+                else:
+                    messagebox.showerror('도서관리프로그램', '가격, 관련링크를 입력해주세요')
+            else:
+                messagebox.showerror('도서관리프로그램', '가격을 입력해주세요')
+
+        elif in_data[5] == '' :     # 제목, 저자, 출판사, ISBN, 가격
+            if in_data[6] == '':
+                messagebox.showerror('도서관리프로그램', '관련링크, 도서 설명을 입력해주세요')
+            else:
+                messagebox.showerror('도서관리프로그램', '관련링크를 입력해주세요')
+
+        elif in_data[6] == '' :     # 도서 설명 외 모든 정보 입력 됨
+            messagebox.showerror('도서관리프로그램', '도서 설명을 입력해주세요')
 
         else :
             check = messagebox.askquestion('도서관리프로그램', '도서를 등록하시겠습니까?')
 
-            if check:
+            if check=='yes':
+                new_data = pd.DataFrame({'BOOK_ISBN' : [isbn], 'BOOK_TITLE' : [title], 'BOOK_AUTHOR' : [author], 'BOOK_PUB' : [pub], 'BOOK_PRICE' :[price], 'BOOK_LINK' : [link], 'BOOK_DESCRIPTION' : [description]})
+                self.book_data = pd.concat([self.book_data, new_data])
+                self.book_data.sort_values('BOOK_TITLE')
                 messagebox.showinfo('도서관리프로그램', '도서가 등록되었습니다.')
-                self.book_data = pd.concat([self.book_data, new_data], ignore_index=True)
-                self.book_data.to_csv('BOOK.CSV', encoding='utf-8', index = False)
+                return True
+                # self.book_data.to_csv('BOOK.CSV', encoding='utf-8', index = False)
 
             else :
                 messagebox.showinfo('도서관리프로그램', '등록이 취소되었습니다.')
@@ -74,9 +159,9 @@ class Book_DataFrame():
 
     # 특정 도서 정보 확인    
     def Book_info(self, select) :
-        data = self.book_data.loc[self.book_data['BOOK_ISBN']==select]
+        data = self.book_data.loc[self.book_data['BOOK_ISBN']==int(select)]
         idx = data.index    #isbn에 따라 인덱스값이 다르기 때문에 index로 찾은 도서 정보의 인덱스 값을 추출
-        print(data)
+        
         intext = list()
 
         for i in data:
@@ -84,12 +169,28 @@ class Book_DataFrame():
 
         return intext
 
+    # ISBN 중복확인
+    def Check_isbn(self, isbn):
+        if (self.book_data['BOOK_ISBN'] == int(isbn)).any():
+            messagebox.showerror('중복확인', '\n 중복된 ISBN입니다.')
+        else:
+            messagebox.showinfo('중복확인', '\n 등록가능한 ISBN입니다.')
 
+    # 도서 수정 isbn 중복 예외처리
+    def Check_reisbn(self, bf_isbn, af_isbn):
+        if af_isbn == bf_isbn:
+            messagebox.showerror('도서관리프로그램', '같은 ISBN으로 수정할 수 없습니다.')
+
+        else:
+            if (self.book_data['BOOK_ISBN'] == int(af_isbn)).any():
+                messagebox.showerror('중복확인', '\n 중복된 ISBN입니다.')
+            else:
+                messagebox.showinfo('중복확인', '\n 등록가능한 ISBN입니다.')
 
     # 도서 수정
     def Book_modi(self, check_isbn, modi_data=[]) :
         # check_isbn : 기존 데이터 입력받아 해당 데이터 지정
-
+        # print(modi_data)
         #modi_data의 원소들이 알맞은 변수에 지정될 수 있도록 수정
         isbn=modi_data[3]
         title=modi_data[0]
@@ -101,32 +202,52 @@ class Book_DataFrame():
         description=modi_data[6]
 
         if (self.book_data['BOOK_ISBN']==check_isbn).any():
-            # if check_isbn == isbn : # 기능 정의서에는 같은 isbn으로 수정할 수 없게 되어있음
-            #     messagebox.showerror('도서관리프로그램', '같은 ISBN으로 수정할 수 없습니다.')
-            ans = messagebox.askquestion('도서관리프로그램', '해당 도서를 수정하시겠습니까?')
-
-            if ans:    
-                self.book_data.loc[(self.book_data['BOOK_ISBN']==check_isbn), ('BOOK_ISBN', 'BOOK_TITLE', 'BOOK_AUTHOR', 'BOOK_PUB', 'BOOK_PRICE', 'BOOK_LINK', 'BOOK_DESCRIPTION')] = (isbn, title, author, pub, price, link, description)
-                self.book_data.to_csv('BOOK_.csv', encoding='utf-8', index=False)  #현재 테스트용의 데이터를 사용하고 있으므로 추후 csv 파일을 연결하면 해당 코드 활성화
-                messagebox.showinfo('도서관리프로그램', '도서가 수정되었습니다.')
+            if isbn == int(check_isbn) : # 기능 정의서에는 같은 isbn으로 수정할 수 없게 되어있음
+                messagebox.showerror('도서관리프로그램', '같은 ISBN으로 수정할 수 없습니다.')
 
             else:
-                messagebox.showinfo('도서관리프로그램', '도서 수정이 취소되었습니다.')
+                ans = messagebox.askquestion('도서관리프로그램', '해당 도서를 수정하시겠습니까?')
+
+                if ans == 'yes':    
+                    self.book_data.loc[(self.book_data['BOOK_ISBN']==int(check_isbn)), ('BOOK_ISBN', 'BOOK_TITLE', 'BOOK_AUTHOR', 'BOOK_PUB', 'BOOK_PRICE', 'BOOK_LINK', 'BOOK_DESCRIPTION')] = (isbn, title, author, pub, price, link, description)
+                    self.book_data.to_csv('BOOK.csv', encoding='utf-8', index=False)  #현재 테스트용의 데이터를 사용하고 있으므로 추후 csv 파일을 연결하면 해당 코드 활성화
+                    messagebox.showinfo('도서관리프로그램', '도서가 수정되었습니다.')
+                    return True
+
+                elif ans:
+                    messagebox.showinfo('도서관리프로그램', '도서 수정이 취소되었습니다.')
+
+        else:
+            if isbn == int(check_isbn) : # 기능 정의서에는 같은 isbn으로 수정할 수 없게 되어있음
+                messagebox.showerror('도서관리프로그램', '같은 ISBN으로 수정할 수 없습니다.')
+
+            else: 
+                ans = messagebox.askquestion('도서관리프로그램', '해당 도서를 수정하시겠습니까?')
+
+                if ans == 'yes':    
+                    self.book_data.loc[(self.book_data['BOOK_ISBN']==int(check_isbn)), ('BOOK_ISBN', 'BOOK_TITLE', 'BOOK_AUTHOR', 'BOOK_PUB', 'BOOK_PRICE', 'BOOK_LINK', 'BOOK_DESCRIPTION')] = (isbn, title, author, pub, price, link, description)
+                    self.book_data.to_csv('BOOK.csv', encoding='utf-8', index=False)  #현재 테스트용의 데이터를 사용하고 있으므로 추후 csv 파일을 연결하면 해당 코드 활성화
+                    messagebox.showinfo('도서관리프로그램', '도서가 수정되었습니다.')
+                    return True
+
+                elif ans:
+                    messagebox.showinfo('도서관리프로그램', '도서 수정이 취소되었습니다.')
 
     # 도서 삭제
     def Book_del(self, isbn) :
-        for i in range(len(isbn)):
-            if self.book_data['BOOK_ISBN'].isin([isbn[i]]).any():
-                # if rent_ing:
-                #     messagebox.showinfo('도서관리프로그램', '※대여중인 도서는 삭제할 수 없습니다.')
-                ask = messagebox.askquestion('도서관리프로그램', '도서를 삭제하시겠습니까?')
-                if ask:
-                    self.book_data.drop(self.book_data.loc[self.book_data['BOOK_ISBN'].isin([isbn[i]])].index, inplace=True)
-                    self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)
-                    messagebox.showinfo('도서관리프로그램', '도서가 삭제되었습니다.')
 
-                else:
-                    messagebox.showinfo('도서관리프로그램', '취소되었습니다.')
+        if self.book_data['BOOK_ISBN'].isin([int(isbn)]).any():
+            # if rent_ing:
+            #     messagebox.showinfo('도서관리프로그램', '※대여중인 도서는 삭제할 수 없습니다.')
+            ask = messagebox.askquestion('도서관리프로그램', '도서를 삭제하시겠습니까?')
+            if ask=='yes':
+                if self.book_data['BOOK_ISBN'].isin([int(isbn)]).any():
+                    self.book_data.drop(self.book_data.loc[self.book_data['BOOK_ISBN'].isin([int(isbn)])].index, inplace=True)
+                # self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)
+                messagebox.showinfo('도서관리프로그램', '도서가 삭제되었습니다.')
+                return True
+            else:
+                messagebox.showinfo('도서관리프로그램', '취소되었습니다.')
 
     def readcsv(self):
         self.book_data = pd.read_csv('BOOK.csv', encoding='utf-8')
@@ -191,4 +312,5 @@ def set_str(input_s, max_size=26, fill_char=' '):
     #     return intext
 # a = Book_DataFrame()
 # a.readcsv()
-# print(a.Book_Search('지식'))
+# # print(a.Book_Search('지식'))
+# print()
