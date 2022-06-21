@@ -212,8 +212,10 @@ class new_window:
                     if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<2:
                         list[i][j] = list[i][j][:8]+'...'
                     if font_size==13 and len(list[i])>3:
-                        if type(list[i][j])==str and len(list[i][j])<8 and len(list[i])>3:
+                        if type(list[i][j])==str and len(list[i][j])>5 and len(list[i][j])<6 and len(list[i])>3:
                             self.text.insert('end', " {:<25}".format(list[i][j]))
+                        elif type(list[i][j])==str and len(list[i][j])<5 and len(list[i])>3:
+                            self.text.insert('end', " {:<27}".format(list[i][j]))
                         else:
                             self.text.insert('end', " {:<20}".format(list[i][j]))
                     elif len(list[i])>3 and j==0 and len(list[i][0])<6:
@@ -303,12 +305,22 @@ class new_window:
                 # 데이터 출력 포멧팅 필요 - 가독성
                 for j in range(len(out_data[i])) :
                     # if len(out_data[i][j]) <= 7:
-                    # self.text.insert('end', '{:<14}'.format(out_data[i][j])) 
-                    self.text.insert('end', '{}'.format(bc.set_str(out_data[i][j])))
-
+                    # self.text.insert('end', '{:<14}'.format(out_data[i][j]))
+                    if type(out_data[i][j])==str and len(out_data[i][j])>9 and j<3:
+                        out_data[i][j] = out_data[i][j][:9]+'...'
+                    if j==3:
+                        self.text.insert('end', '{:<}'.format(out_data[i][j]))
+                    elif choice and len(out_data[i][j])<6:
+                        self.text.insert('end', '{:<25}'.format(out_data[i][j]))
+                    elif choice:
+                        self.text.insert('end', '{:<18}'.format(out_data[i][j]))
+                    elif len(out_data[i][j])<6:
+                        self.text.insert('end', '{:<28}'.format(out_data[i][j]))
+                    else:
+                        self.text.insert('end', '{:<20}'.format(out_data[i][j]))
 
                 if bt_text!=None:       # 버튼
-                    # self.text.insert('end', ' ')
+                    self.text.insert('end', ' ')
                     if bt_text == '수정':
                         bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.creaNewWindow_book_info_re(bd_window, x, uc))
                         self.text.window_create('end', window=bt)
@@ -332,7 +344,7 @@ class new_window:
     # (out_data, command_def, bt_text=None, bd_window=None ,font_size=13, uc=None, choice=True, text_del=True) :
     #도서 목록 출력[도서]
     def Book_list(self, bar_text, bt_text, book_data, font_size=15, command_def=None, choice=True, bd_window=None, uc=None):   #choice->리스트 앞에 체크박스 존재 여부를 결정(True:체크박스 설정)
-        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=E)
+        label_bar = Label(self.base_frame, relief="ridge", height=2, bg='white', text=bar_text, font=('돋움', 15), anchor=W)
         label_bar.pack(fill=X)
         label = Label(self.base_frame, relief="ridge", height=37, bg='white')
         label.pack(fill=BOTH, expand=True)

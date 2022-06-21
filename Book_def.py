@@ -11,18 +11,16 @@ def search_info(win, choice, chk=True, bd_win=None, UC=None): # bt_def=None,
     search = win.input_text.get()   #기입창에 입력한 데이터 추출
     search_data = book_data.Book_Search(search)   #search로 데이터 프레임에서 추출한 데이터 저장(추후 수정)
     if choice == '조회':
-        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
+        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk, bt_text='확인') # win.info_list(t, bt_def, 15, chk, 1)
 
     elif choice == '수정':
         win.Book_info_list(search_data, bt_text=choice, bd_window=bd_win, font_size=15, uc=UC, choice=chk)
 
     elif choice == '삭제':
-        win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '삭제', book_data.Book_list_all(), choice = False, bd_window = bd_win, uc=UC)
+        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk, bt_text=choice)
 
-    else:
-        win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
-
-        
+    # else:
+    #     win.Book_info_list(search_data, bd_window=bd_win, font_size=15, uc=UC, choice=chk) # win.info_list(t, bt_def, 15, chk, 1)
 
 
 def main_menu(window:Tk, uc=None):
@@ -57,10 +55,7 @@ def createNewWindow_book_s(window, uc=None):
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '조회', bd_win=window, UC=book_new_win))
     book_new_win.createButton('대출', book_new_win.baseLabel, lambda : rv.Rent_Screen(window, uc=book_new_win))
     book_new_win.createButton('등록', book_new_win.baseLabel, lambda: createNewWindow_book_r(window, uc=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '확인', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
-    # book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '확인', book_class.Book_list_all())
-
-
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '확인', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
 
 # 도서조회(수정) -------------------완료----------------------
 def createNewWindow_book_m(window, uc=None):
@@ -75,7 +70,7 @@ def createNewWindow_book_m(window, uc=None):
     book_new_win.Change_Frame('도서 수정')
 
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '수정', chk=False, bd_win=window, UC=book_new_win))
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '수정', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
 
 
 # 도서조회(삭제) ---------------------삭제------------------
@@ -90,8 +85,7 @@ def createNewWindow_book_del(window, uc=None):
     book_new_win.Change_Frame('도서 삭제')
 
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '삭제', bd_win=window, UC=book_new_win))
-    # book_new_win.createButton('삭제', book_new_win.baseLabel, lambda : book_class.Book_del())
-    book_new_win.Book_list("제목\t\t저자\t\t\t출판사\t\tISBN\t\t", '삭제', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '삭제', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
 
 # 도서 삭제 함수
 def del_book(window, isbn, uc=None):
@@ -101,8 +95,6 @@ def del_book(window, isbn, uc=None):
     book_class.tocsv()
     if ask:
         createNewWindow_book_del(window, uc)
-
-
 
 
 # 도서 등록 
