@@ -212,8 +212,10 @@ class new_window:
                     if type(list[i][j])==str and len(list[i][j])>8 and len(list[i])>3 and j<2:
                         list[i][j] = list[i][j][:8]+'...'
                     if font_size==13 and len(list[i])>3:
-                        if type(list[i][j])==str and len(list[i][j])<8 and len(list[i])>3:
+                        if type(list[i][j])==str and len(list[i][j])>5 and len(list[i][j])<6 and len(list[i])>3:
                             self.text.insert('end', " {:<25}".format(list[i][j]))
+                        elif type(list[i][j])==str and len(list[i][j])<5 and len(list[i])>3:
+                            self.text.insert('end', " {:<27}".format(list[i][j]))
                         else:
                             self.text.insert('end', " {:<20}".format(list[i][j]))
                     elif len(list[i])>3 and j==0 and len(list[i][0])<6:
