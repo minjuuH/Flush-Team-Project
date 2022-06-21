@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from UI_Class import*
 from unicodedata import*
+import Rent_Dataframe as RD
 pd.options.display.max_columns = None
 
 # 데이터프레임 사용
@@ -235,19 +236,23 @@ class Book_DataFrame():
 
     # 도서 삭제
     def Book_del(self, isbn) :
-
+        rent = RD.Rent_DF()
+        rent.read_csv()
         if self.book_data['BOOK_ISBN'].isin([int(isbn)]).any():
-            # if rent_ing:
-            #     messagebox.showinfo('도서관리프로그램', '※대여중인 도서는 삭제할 수 없습니다.')
-            ask = messagebox.askquestion('도서관리프로그램', '도서를 삭제하시겠습니까?')
-            if ask=='yes':
-                if self.book_data['BOOK_ISBN'].isin([int(isbn)]).any():
-                    self.book_data.drop(self.book_data.loc[self.book_data['BOOK_ISBN'].isin([int(isbn)])].index, inplace=True)
-                # self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)
-                messagebox.showinfo('도서관리프로그램', '도서가 삭제되었습니다.')
-                return True
+            print(rent.rent[rent.rent['BOOK_ISBN']==int(isbn)]['RETURN_DATE'])
+            #대출 중인 도서인지 확인
+            if rent.rent['BOOK_ISBN'].isin([int(isbn)]).any() and rent.rent[rent.rent['BOOK_ISBN']==int(isbn)]['RETURN_DATE'].isna().any():
+                messagebox.showinfo('도서관리프로그램', '※대여중인 도서는 삭제할 수 없습니다.')
             else:
-                messagebox.showinfo('도서관리프로그램', '취소되었습니다.')
+                ask = messagebox.askquestion('도서관리프로그램', '도서를 삭제하시겠습니까?')
+                if ask=='yes':
+                    if self.book_data['BOOK_ISBN'].isin([int(isbn)]).any():
+                        self.book_data.drop(self.book_data.loc[self.book_data['BOOK_ISBN'].isin([int(isbn)])].index, inplace=True)
+                    # self.book_data.to_csv('BOOK_csv', encoding='utf-8', index=False)
+                    messagebox.showinfo('도서관리프로그램', '도서가 삭제되었습니다.')
+                    return True
+                else:
+                    messagebox.showinfo('도서관리프로그램', '취소되었습니다.')
 
     def readcsv(self):
         self.book_data = pd.read_csv('BOOK.csv', encoding='utf-8')
