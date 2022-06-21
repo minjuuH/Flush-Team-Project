@@ -515,7 +515,7 @@ class new_window:
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
         if pic:
             def search():
-                image = askopenfilename(filetypes=(("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
+                image = askopenfilename(filetypes=(("모든 파일", "*.*"), ("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
                 input.set(image)
             pic_button = Button(self.Base_Top, text='사진찾기', font=('돋움', 13), command = search)
             pic_button.grid(row=r, column=5)
