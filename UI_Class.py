@@ -113,18 +113,24 @@ class new_window:
         self.re_day.pack(fill=X, expand=True)
 
     #최종 버튼(가운데 정렬)
-    def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None, bt3_def=None):
+    def under_button(self, bt2_t, base, more=False, bt1_t=None, bt1_def=None, bt2_def=None, bt3_t=None, bt3_def=None):
         #more=True일 경우 버튼 3개 출력 / 추가되는 버튼은 command 함수를 따로 받아서 처리(bt1_def)
         buttonBase = Label(base, height=50)
         buttonBase.pack(side=BOTTOM)
         if more:
             bt1 = Button(buttonBase, text=bt1_t, font=('돋움', 20), bg='gray', fg='white', command=bt1_def)
             bt1.pack(side=LEFT, padx=5, pady=5)
+
         if bt2_def==None:
             bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=lambda:msg(bt2_t))
         else:
             bt2 = Button(buttonBase, text=bt2_t, font=('돋움', 20), bg='gray', fg='white', command=bt2_def)
-        bt3 = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=bt3_def)
+
+        if bt3_t==None:
+            bt3 = Button(buttonBase, text="취소", font=('돋움', 20), bg='gray', fg='white', command=bt3_def)
+        else:
+            bt3 = Button(buttonBase, text=bt3_t, font=('돋움', 20), bg='gray', fg='white', command=bt3_def)
+
         bt2.pack(side=LEFT, padx=5, pady=5)
         bt3.pack(side=LEFT, padx=5, pady=5)
 
@@ -270,9 +276,9 @@ class new_window:
     # 도서 데이터 출력 
     def Book_info_list(self, out_data, bt_text=None, command_def=None, font_size=13, choice=True, bd_window=None ,uc=None, text_del=True) :
         # book_class = bc.Book_DataFrame()
-        # book_class.readcsv()
+        # # book_class.readcsv()
         def Select(select_data, index):        # 수정/삭제 버튼 눌렸을 때 해당 데이터프레임 선택
-            sel_val = select_data[index].values()
+            sel_val = select_data[index]
             return sel_val
 
         if text_del:
@@ -288,8 +294,7 @@ class new_window:
 
         else:             #출력할 데이터가 존재할 경우
             for i in range(len(out_data)):
-                #현재 out_data는 2차원 리스트가 아님 -> out_data를 2차원 리스트로 전달 받고 출력 형식 수정해야함
-                select_data.append({i : out_data[i][0]}) # 각 데이터 마다 고유 번호(순서, isbn) 저장
+                select_data.append(out_data[i][3]) # 각 데이터 마다 고유 번호(순서, isbn) 저장
                 
                 if choice:      # 체크박스
                     cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
@@ -305,11 +310,15 @@ class new_window:
                 if bt_text!=None:       # 버튼
                     # self.text.insert('end', ' ')
                     if bt_text == '수정':
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.creaNewWindow_book_info_re(bd_window, Select(select_data, i), uc))
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.creaNewWindow_book_info_re(bd_window, x, uc))
                         self.text.window_create('end', window=bt)
 
                     elif bt_text == '삭제' :
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda:bd.createNewWindow_book_del(bd_window, Select(select_data, i), uc))
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.del_book(bd_window, x, uc))
+                        self.text.window_create('end', window=bt)
+
+                    elif bt_text == '확인' :
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.creaNewWindow_book_info(bd_window, x, uc))
                         self.text.window_create('end', window=bt)
 
                     else :
@@ -458,8 +467,9 @@ class new_window:
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
      
          #입력칸 생성[도서/회원]
-    def book_entry_set(self, t, r, re_choice=False, ol=False, text_data=None):
+    def book_entry_set(self, t, r, re_choice=False, ol=False, text_data=None, ISBN=None):
         book_class = bc.Book_DataFrame()
+        book_class.readcsv()
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)     #sticky : 지정된 칸 크기가 위젯 크기보다 클 경우, 정렬 방식을 지정
         get_data = StringVar()
@@ -468,13 +478,24 @@ class new_window:
             entry.insert(0, text_data) #차후에 전달받은 데이터를 출력하는 것으로 변경
         entry.grid(row=r, column=2, padx=5, ipady=3, columnspan=3)
         if ol==True: 
-            def com_isbn() : # 중복확인
-                if entry.get() in str(book_class.book_data['BOOK_ISBN']): # ISBN 중복시
-                    self.check_overlap = Label(self.Base_Top, text='이미 등록되어 있는 ISBN입니다.', fg='red', font=('돋움', 13), bg='white')
-                    self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
-                else:
-                    self.check_overlap = Label(self.Base_Top, text='등록가능한 ISBN입니다.\t\t', fg='blue', font=('돋움', 13), bg='white')
-                    self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
+            if ISBN==None:      
+                def com_isbn() : # 일반적인 중복확인
+                    isbn = entry.get()
+                    if isbn == '':
+                        messagebox.showerror('형식오류', 'ISBN은 13개의 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
+
+                    else:
+                        book_class.Check_isbn(isbn)
+
+            else:
+                def com_isbn() : # 수정화면 예외처리 포함한 중복확인
+                    isbn = entry.get()
+                    if isbn == '':
+                        messagebox.showerror('형식오류', 'ISBN은 13개의 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
+
+                    else:
+                        book_class.Check_reisbn(ISBN, isbn)
+            
 
             self.overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command=com_isbn)
             self.overlap_bt.grid(row=r, column=5)
@@ -537,9 +558,10 @@ class new_window:
         info_label = Label(self.Base_Bottom, text='도서 설명', font=('돋움', 15), bg='white')
         info_label.pack(anchor=NW, padx=30, pady=10)
         entry = Entry(self.Base_Bottom, width=100, font=('돋움', 13), relief='solid', bd=1)
-        if re_choice:
-            entry.insert(0, '기존정보') #차후에 전달받은 데이터를 출력하는 것으로 변경
-            # entry.insert(0, bf_data) #차후에 전달받은 데이터를 출력하는 것으로 변경
+        
+        if re_choice:    # 도서 수정데이터 저장
+            entry.insert(0, bf_data) 
+
         if op_choice:
             entry.config(state=DISABLED)
         entry.pack(fill=X, padx=30, ipady=70)
