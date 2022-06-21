@@ -123,7 +123,7 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
         if overdue < dt.timedelta(0):
             messagebox.showerror('도서관리시스템','연체된 도서는 연장할 할 수 없습니다.')
         #연장한 전적이 있는 도서일 경우
-        elif re_day-dt.timedelta(days=7)!=rent_day:
+        elif re_day-dt.timedelta(days=14)!=rent_day:
             messagebox.showerror('도서관리시스템','이미 연장된 도서입니다.')
         else:
             re_day = rent_info.Rent_replus(isbn)
