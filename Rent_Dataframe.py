@@ -24,7 +24,7 @@ class Rent_DF:
 
     def Rent_Add(self):
         rent_day = [dt.datetime.now().date()]*len(self.rent_book)                     #대출 기능을 수행하는 당일을 대출일로 저장
-        re_day = [dt.datetime.now().date()+dt.timedelta(days=7)]*len(self.rent_book)  #대출일로부터 7일 뒤를 반납예정일로 저장
+        re_day = [dt.datetime.now().date()+dt.timedelta(days=14)]*len(self.rent_book)  #대출일로부터 14일 뒤를 반납예정일로 저장
 
         self.add_rent = pd.DataFrame({'BOOK_ISBN' : self.rent_book,
                             'USER_PHONE' : [self.rent_user]*len(self.rent_book),

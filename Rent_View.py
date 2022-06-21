@@ -85,6 +85,7 @@ def Rent_Screen(window, uc=None):
             if msg_Ans:
                 rent_IF.Rent_Add()
                 rent_IF.to_csv()
+                rent_IF.add_rent.loc
                 messagebox.showinfo('도서관리시스템', "대출 완료되었습니다.\n대여일:{}\n반납예정일:{}".format(rent_IF.add_rent.loc[0,'RENT_DATE'], rent_IF.add_rent.loc[0,'RETURN_DUE_DATE']))
                 Rent_Screen(window, new_win)
 
@@ -159,7 +160,7 @@ def chkU_def(win, root_win, rent, re=False):
             root_win.rentU_label.config(text="대여인:"+win.chk_list[0][0])
             rent.rent_user = win.chk_list[0][2] #대출정보에 사용할 회원 전화번호 데이터 저장
             root_win.rent_day.config(text="대여일:{}".format(dt.datetime.now().date()))
-            root_win.re_day.config(text="반납예정일:{}".format(dt.datetime.now().date()+dt.timedelta(days=7)))
+            root_win.re_day.config(text="반납예정일:{}".format(dt.datetime.now().date()+dt.timedelta(days=14)))
             root_win.userinfo.config(text=win.chk_list[0][0]+' | '+win.chk_list[0][1]+' | '+win.chk_list[0][2])
             win.newWindow.withdraw()
         else:
@@ -188,7 +189,7 @@ def chkB_def(win, root_win, rent):
         else:
             root_win.rentB_label.config(text="대출도서:{}".format(win.chk_list[0][0]))
         root_win.rent_day.config(text="대여일:{}".format(dt.datetime.now().date()))
-        root_win.re_day.config(text="반납예정일:{}".format(dt.datetime.now().date()+dt.timedelta(days=7)))
+        root_win.re_day.config(text="반납예정일:{}".format(dt.datetime.now().date()+dt.timedelta(days=14)))
         win.newWindow.withdraw()
 
 #취소버튼 클릭시 확인창 -> 해당 기능이 실행된 창을 부모창으로 여기게끔 수정
