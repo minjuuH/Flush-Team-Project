@@ -52,10 +52,10 @@ def createNewWindow_book_s(window, uc=None):
     window.title('도서 조회')
     book_new_win.Change_Frame('도서 조회')
 
-    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '조회', bd_win=window, UC=book_new_win))
+    book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '조회', bd_win=window, UC=book_new_win, chk=False))
     book_new_win.createButton('대출', book_new_win.baseLabel, lambda : rv.Rent_Screen(window, uc=book_new_win))
     book_new_win.createButton('등록', book_new_win.baseLabel, lambda: createNewWindow_book_r(window, uc=book_new_win))
-    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '확인', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
+    book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '확인', book_class.Book_list_all(), choice = False, bd_window = window, uc=book_new_win)
 
 # 도서조회(수정) -------------------완료----------------------
 def createNewWindow_book_m(window, uc=None):
