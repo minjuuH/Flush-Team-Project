@@ -240,11 +240,8 @@ class Book_DataFrame():
         rent.read_csv()
         for i in range(len(isbn)):
             isbn[i] = int(isbn[i])
-        print(isbn)
         if self.book_data['BOOK_ISBN'].isin(isbn).any():
-            #print(rent.rent[rent.rent['BOOK_ISBN']==int(isbn)]['RETURN_DATE'])
             #대출 중인 도서인지 확인
-            print(rent.rent.loc[rent.rent['BOOK_ISBN'].isin(isbn),'RETURN_DATE'])
             if rent.rent['BOOK_ISBN'].isin(isbn).any() and rent.rent.loc[rent.rent['BOOK_ISBN'].isin(isbn),'RETURN_DATE'].isna().any():
                 messagebox.showinfo('도서관리프로그램', '※대여중인 도서는 삭제할 수 없습니다.')
             else:
