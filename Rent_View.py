@@ -173,6 +173,7 @@ def chkB_def(win, root_win, rent):
     if len(win.chk_list)==0:    #선택된 도서가 없을 경우
         messagebox.showwarning("도서 선택", "도서가 선택되지 않았습니다.", parent=win.newWindow)
     else:
+        rent.rent_book.clear()
         root_win.text.config(state=NORMAL)  #텍스트 위젯을 비워주기 위해 위젯 상태를 변경가능한 상태로 설정
         root_win.text.delete("1.0", "end")
         plus = 0
