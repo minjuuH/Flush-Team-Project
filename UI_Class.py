@@ -288,6 +288,16 @@ class new_window:
             self.text.delete('1.0', 'end')
                 
         select_data = [] # isbn값 저장받을 빈 리스트
+        cb_list = []        #체크박스 리스트(각 줄마다 다른 데이터를 반환 받기 위해)
+        self.chk_list = []       #체크박스를 클릭할 시 반환받는 값을 저장할 리스트
+
+        def chk_command(i):
+            if cb_list[i].get() != 0:
+                self.chk_list.append(out_data[i])
+            else:
+                if out_data[i] in self.chk_list:
+                    self.chk_list.remove(out_data[i])
+            print(self.chk_list)
 
         if len(out_data)==0:  #출력 할 데이터가 존재하지 않을 경우
             self.text.insert('end', '\n\n\n\n\n\n\n\n\n\n\n')
@@ -298,8 +308,10 @@ class new_window:
             for i in range(len(out_data)):
                 select_data.append(out_data[i][3]) # 각 데이터 마다 고유 번호(순서, isbn) 저장
                 
-                if choice:      # 체크박스
-                    cb = Checkbutton(self.text, bg='white', font=('돋움', font_size))
+                if choice:
+                    chk = IntVar()
+                    cb_list.append(chk)
+                    cb = Checkbutton(self.text, bg='white', font=('돋움', font_size), variable=cb_list[i], command=lambda x=i:chk_command(x))
                     self.text.window_create("end", window=cb)
 
                 # 데이터 출력 포멧팅 필요 - 가독성
@@ -326,7 +338,7 @@ class new_window:
                         self.text.window_create('end', window=bt)
 
                     elif bt_text == '삭제' :
-                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.del_book(bd_window, x, uc))
+                        bt = Button(self.text, text=bt_text, font=('돋움', font_size-3), command=lambda x=Select(select_data, i) :bd.del_book(bd_window, [x], uc))
                         self.text.window_create('end', window=bt)
 
                     elif bt_text == '확인' :
@@ -363,7 +375,16 @@ class new_window:
         self.info_list(list=list)
 
     #버튼 생성[도서,회원]
-    def createButton(self, showText, window, bt_def=None):   #window=self.baseLabel
+    def createButton(self, showText, window, bt_def=None, uc=None, Mwin=None):   #window=self.baseLabel
+        self.chk_list = list()
+        if showText=='삭제':
+            def del_chk_book():
+                print(self.chk_list)
+                isbn = list()
+                for i in self.chk_list:
+                    isbn.append(i[3])
+                bd.del_book(Mwin, isbn, uc)
+            bt_def = del_chk_book
         button = Button(window, text=showText, font=('돋움', 20), bg='gray', fg='white', command=bt_def)
         button.pack(side=LEFT, padx=2, pady=10)
 
@@ -511,8 +532,8 @@ class new_window:
 
             self.overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command=com_isbn)
             self.overlap_bt.grid(row=r, column=5)
-            self.check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
-            self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
+            # self.check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
+            # self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
         return entry
 
     #입력칸 생성[회원]

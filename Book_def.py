@@ -85,15 +85,19 @@ def createNewWindow_book_del(window, uc=None):
     book_new_win.Change_Frame('도서 삭제')
 
     book_new_win.Search_bar(S_def=lambda : search_info(book_new_win, '삭제', bd_win=window, UC=book_new_win))
+    book_new_win.createButton('삭제', book_new_win.baseLabel, uc=book_new_win, Mwin=window)
     book_new_win.Book_list("{:>25}{:>25}{:>25}{:>30}".format('제목','저자','출판사','ISBN'), '삭제', book_class.Book_list_all(), choice = True, bd_window = window, uc=book_new_win)
 
 # 도서 삭제 함수
-def del_book(window, isbn, uc=None):
+def del_book(window, isbn, uc=None, info=False):
     book_class=BC.Book_DataFrame()
     book_class.readcsv()
     ask = book_class.Book_del(isbn)
     book_class.tocsv()
-    if ask:
+    #도서 상세정보창에서 삭제한 경우, 도서 삭제 후 도서 조회창으로 이동하도록 설정
+    if ask and info:
+        createNewWindow_book_s(window, uc)
+    elif ask:
         createNewWindow_book_del(window, uc)
 
 
@@ -149,7 +153,7 @@ def creaNewWindow_book_info(window, isbn, uc=None):
     book_new_win.info_output('가격', 5, out_data[4])
     book_new_win.info_output('관련링크', 6, out_data[5])
     book_new_win.book_ex(1, out_data[6], 1)
-    book_new_win.under_button('삭제', book_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:creaNewWindow_book_info_re(window, isbn, uc=book_new_win), bt3_t='닫기', bt3_def=lambda:main_menu(window, book_new_win))
+    book_new_win.under_button('삭제', book_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:creaNewWindow_book_info_re(window, isbn, uc=book_new_win), bt3_t='닫기', bt3_def=lambda:main_menu(window, book_new_win), bt2_def=lambda:del_book(window,[out_data[0]],book_new_win,1))
 
 # 도서 정보 수정 ----------완료-------------
 def creaNewWindow_book_info_re(window, ISBN, uc=None):
@@ -204,6 +208,6 @@ def creaNewWindow_rebook_info(window, out_data=[], uc=None):
     book_new_win.info_output('가격', 5, out_data[4])
     book_new_win.info_output('관련링크', 6, out_data[5])
     book_new_win.book_ex(1, out_data[6], 1)
-    book_new_win.under_button('삭제', book_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:creaNewWindow_book_info_re(window, out_data[3], uc=book_new_win), bt2_def=lambda : book_class.Book_del(out_data[3]), bt3_t='닫기', bt3_def=lambda:main_menu(window, book_new_win))
+    book_new_win.under_button('삭제', book_new_win.base_frame, more=1, bt1_t='수정', bt1_def=lambda:creaNewWindow_book_info_re(window, out_data[3], uc=book_new_win), bt2_def=lambda:del_book(window,[out_data[3]],book_new_win,1), bt3_t='닫기', bt3_def=lambda:main_menu(window, book_new_win))
     
 
