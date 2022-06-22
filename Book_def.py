@@ -123,7 +123,7 @@ def createNewWindow_book_r(window, uc=None):
     description = book_new_win.book_ex()
 
     def book_add() :
-        in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), price.get(), link.get(), description.get()]
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
         ask = book_class.Book_in(in_data=in_data)
         book_class.tocsv()
         if ask:
@@ -180,7 +180,7 @@ def creaNewWindow_book_info_re(window, ISBN, uc=None):
     description=book_new_win.book_ex(1, out_data[6])
 
     def modi_clear():   #완료 버튼 커멘드로 연결할 함수
-        in_data = [title.get(), author.get(), pub.get(), int(isbn.get()), int(price.get()), link.get(), description.get()]
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
         # print(in_data)
         ask = book_class.Book_modi(check_isbn=ISBN, modi_data=in_data)
         book_class.tocsv()
