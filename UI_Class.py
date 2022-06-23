@@ -514,18 +514,21 @@ class new_window:
             if ISBN==None:      
                 def com_isbn() : # 일반적인 중복확인
                     isbn = entry.get()
-                    if isbn == '':
-                        messagebox.showerror('형식오류', 'ISBN은 13개의 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
-
-                    else:
+                        
+                    if isbn == '':                  # 빈 공간에 대한 예외처리
+                        messagebox.showerror('형식오류', 'ISBN은 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
+                    
+                    else:                           # 중복확인
                         book_class.Check_isbn(isbn)
 
             else:
                 def com_isbn() : # 수정화면 예외처리 포함한 중복확인
                     isbn = entry.get()
-                    if isbn == '':
-                        messagebox.showerror('형식오류', 'ISBN은 13개의 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
 
+                    if isbn == '':
+                        messagebox.showerror('형식오류', 'ISBN은 숫자로 이루어져 있어야 합니다.\n ex) 9788970504773')
+                    
+                    
                     else:
                         book_class.Check_reisbn(ISBN, isbn)
             
