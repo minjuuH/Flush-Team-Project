@@ -113,6 +113,13 @@ def createNewWindow_book_r(window, uc=None):
     window.title('도서 등록')
     book_new_win.Change_Frame('도서 등록')
 
+    def book_add() :
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end')]
+        ask = book_class.Book_in(in_data=in_data)
+        book_class.tocsv()
+        if ask:
+            creaNewWindow_book_info(window, in_data[3], uc)
+
     book_new_win.input_set('도서 등록')
     title = book_new_win.book_entry_set('제목', 1)
     author = book_new_win.book_entry_set('저자', 2)
@@ -120,16 +127,8 @@ def createNewWindow_book_r(window, uc=None):
     isbn = book_new_win.book_entry_set('ISBN', 4, ol=1)
     price = book_new_win.book_entry_set('가격', 6)
     link = book_new_win.book_entry_set('관련링크', 7)
-    description = book_new_win.book_ex()
-
-    def book_add() :
-        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
-        ask = book_class.Book_in(in_data=in_data)
-        book_class.tocsv()
-        if ask:
-            creaNewWindow_book_info(window, in_data[3], uc)
-
     book_new_win.under_button('등록', book_new_win.base_frame, bt2_def=book_add, bt3_def=lambda : main_menu(window, uc=book_new_win))
+    description = book_new_win.book_ex()
 
 # ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
@@ -180,7 +179,7 @@ def creaNewWindow_book_info_re(window, ISBN, uc=None):
     description=book_new_win.book_ex(1, out_data[6])
 
     def modi_clear():   #완료 버튼 커멘드로 연결할 함수
-        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get()]
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end')]
         # print(in_data)
         ask = book_class.Book_modi(check_isbn=ISBN, modi_data=in_data)
         book_class.tocsv()
