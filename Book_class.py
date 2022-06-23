@@ -111,16 +111,7 @@ class Book_DataFrame():
 
                     else :
                         messagebox.showinfo('도서관리프로그램', '등록이 취소되었습니다.')
-
         
-    def select_image(self, label):
-        filename = askopenfilename(parent=label, filetypes=(('모든 파일', '*.*'), ('GIF 파일', '*.gif')))
-        photo = ImageTk.PhotoImage(file = filename)
-        label.configure(image=photo)
-        label.image = photo
-        book_image = str(filename)
-        
-
     # 특정 도서 정보 확인    
     def Book_info(self, select) :
         data = self.book_data.loc[self.book_data['BOOK_ISBN']==int(select)]
