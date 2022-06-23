@@ -6,7 +6,7 @@ import Book_def as bd
 import User_dataframe as ud
 import User_View as uv
 import pandas as pd
-from PIL import ImageTk
+from PIL import ImageTk, Image
 
 class new_window:
     #생성자
@@ -459,13 +459,15 @@ class new_window:
         pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
         pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
         pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
-        pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
-        pic.pack(fill= 'both', expand=True)
+        self.pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
+        self.pic.pack(fill= 'both', expand=True)
         if (showimage != '사진등록'):
             if(showimage != None):
-                picture = ImageTk.PhotoImage(file = showimage)
-                pic.configure(image=picture)
-                pic.image = picture
+                image = Image.open(showimage)
+                image = image.resize((180, 220), Image.ANTIALIAS)
+                picture = ImageTk.PhotoImage(image)
+                self.pic.configure(image=picture)
+                self.pic.image = picture
         if open:
             pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
             pic_bt.pack(fill=X, padx=30)
@@ -571,9 +573,15 @@ class new_window:
             check_overlap = Label(self.Base_Top, text='ex) 010-0000-0000', fg='gray', font=('돋움', 13), bg='white')    #전화번호 입력서식을 지정해줌
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
         if pic:
+            entry.config(state = 'readonly')
             def search():
-                image = askopenfilename(filetypes=(("모든 파일", "*.*"), ("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
-                input.set(image)
+                uimage = askopenfilename(filetypes=(("모든 파일", "*.*"), ("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
+                input.set(uimage)
+                image = Image.open(uimage)
+                image = image.resize((180, 220), Image.ANTIALIAS)
+                picture = ImageTk.PhotoImage(image)
+                self.pic.configure(image=picture)
+                self.pic.image = picture
             pic_button = Button(self.Base_Top, text='사진찾기', font=('돋움', 13), command = search)
             pic_button.grid(row=r, column=5)
         return entry

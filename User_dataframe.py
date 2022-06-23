@@ -13,10 +13,9 @@ def checkdays(day):
         if (day[5:7] in day31):
             if(int(day[8:10]) > 31 and int(day[8:10]) < 1):
                 messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
-        elif(day[5:7] in day30):
-            if(int(day[8:10]) > 30 and int(day[8:10]) < 1):
-                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
-        elif(day[5:7] == '02'):
+        if(day[5:7] in day30 and (int(day[8:10]) > 30 and int(day[8:10]) < 1)):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        if(day[5:7] == '02'):
             if(int(day[8:10]) > 28 and int(day[8:10]) < 1):
                 messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
         else:
@@ -135,18 +134,65 @@ class user_dataframe:
             messagebox.showinfo('중복확인', '\n중복되지 않습니다.')
     #회원목록에서 선택 수정할 경우의 함수 (수정할 회원의 USER_PHONE 값을 넘겨받아 진행)
     def modidata(self, phone, list):
+        name = list[0]
+        birth = list[1]
+        phonenum = list[2]
+        sex  = list[3]
+        mail = list[4]
+        image = list[5]
+        if image == '':
+            image = '사진등록'
+        if mail == '':
+            mail = '이메일 없음'
+        modivalue = [name, birth, phonenum, sex, mail, image]
+        column_name = ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_SEX', 'USER_MAIL', 'USER_IMAGE']
+        dayall = ['01', '03', '05', '07', '08', '10', '12', '04', '06', '09', '11', '02']
+        day31 = ['01', '03', '05', '07', '08', '10', '12']
+        day30 = ['04', '06', '09', '11']
+        def do_the_modi():
+            ask = messagebox.askquestion('수정', '\n정말 수정하시겠습니까?')
+            if ask == 'yes':
+                for value, column in zip(modivalue, column_name):
+                    if value == None:
+                            continue
+                    self.data.loc[self.data['USER_PHONE'].str.contains(phone), (column)] = (value)
+                messagebox.showinfo('수정', '\n수정 완료 되었습니다.')
+            else:
+                messagebox.showinfo('수정', '\n수정 취소 되었습니다.')
         if (self.data['USER_PHONE']!=phone).all():
             messagebox.showerror('ERR','\n등록되어 있지 않은 회원입니다.')
         elif(list[2][3] != '-'):
-            if(list[2][8] != '-' ):
-                messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
-        elif(list[1][4] != '-'):
-            if([1][7] != '-'):
-                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(list[2][8] != '-'):
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(len(list[2]) != 13):
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
         elif(len(list[1]) != 10):
             messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
-        if(len(list[1]) == 10):
-                checkdays(list[1])
+        elif(list[1][4] != '-'):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(list[1][7] != '-'):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(list[1][5:7] in day31):
+            if(int(list[1][8:]) > 31 or int(list[1][8:]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+            else:
+                do_the_modi()
+                return True
+        elif(list[1][5:7] in day30):
+            if(int(list[1][8:]) > 30 or int(list[1][8:]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+            else:
+                do_the_modi()
+                return True
+        elif(list[1][5:7] == '02'):
+            if(int(list[1][8:]) > 28 or int(list[1][8:]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+            else:
+                do_the_modi()
+                return True
+        elif(list[1][5:7] not in dayall):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
         elif(list[0] == ''):
             if(list[1] == ''):
                 if(list[2] == ''):
@@ -166,49 +212,22 @@ class user_dataframe:
         elif(list[2] == ''):
             messagebox.showerror('ERR', '\n전화번호가 입력되지 않았습니다.')
         else:
-            #입력받은 수정할 데이터
-            name = list[0]
-            birth = list[1]
-            phonenum = list[2]
-            sex  = list[3]
-            mail = list[4]
-            image = list[5]
-            if image == '':
-                image = '사진등록'
-            if mail == '':
-                image = '이메일 없음'
-            modivalue = [name, birth, phonenum, sex, mail, image]
-            column_name = ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_SEX', 'USER_MAIL', 'USER_IMAGE']
             if (self.data['USER_PHONE'] == phonenum).any():
                 if(phone == phonenum):
-                    ask = messagebox.askquestion('수정', '\n정말 수정하시겠습니까?')
-                    if ask == 'yes':
-                        for value, column in zip(modivalue, column_name):
-                            if value == None:
-                                continue
-                            self.data.loc[self.data['USER_PHONE'].str.contains(phone), (column)] = (value)
-                        messagebox.showinfo('수정', '\n수정 완료 되었습니다.')
-                        return True
-                    else:
-                        messagebox.showinfo('수정', '\n수정 취소 되었습니다.')
+                    do_the_modi()
+                    return True
                 else:
                     messagebox.showerror('ERR','\n등록되어 있는 회원입니다.')
             else:
-                ask = messagebox.askquestion('수정', '\n정말 수정하시겠습니까?')
-                if ask == 'yes':
-                    for value, column in zip(modivalue, column_name):
-                        if value == None:
-                            continue
-                        self.data.loc[self.data['USER_PHONE'].str.contains(phone), (column)] = (value)
-                    messagebox.showinfo('수정', '\n수정 완료 되었습니다.')
-                    return True
-                else:
-                    messagebox.showinfo('수정', '\n수정 취소 되었습니다.')
+                do_the_modi()
+                return True
                     
     
     #회원 등록 함수        
     def add_data(self, list):
-        #입력받은 추가할 데이터
+        dayall = ['01', '03', '05', '07', '08', '10', '12', '04', '06', '09', '11', '02']
+        day31 = ['01', '03', '05', '07', '08', '10', '12']
+        day30 = ['04', '06', '09', '11']
         name = list[0]
         birth = list[1]
         phonenum = list[2]
@@ -222,6 +241,15 @@ class user_dataframe:
         #수정과 마찬가지로 입력받은 값을 바탕으로 등록진행하도록 수정 예정
         adduser = DataFrame({'USER_NAME' : [name], 'USER_BIRTH': [birth], 'USER_PHONE' : [phonenum], 'USER_SEX' : [sex], 'USER_MAIL' : [mail], 'USER_IMAGE' : [image],
                              'USER_RENT_CNT': 0})
+        def do_the_add():
+            ask = messagebox.askquestion('등록', '\n정말 등록하시겠습니까?')
+            if ask == 'yes':
+                self.data = concat([self.data, adduser])
+                self.data.sort_values('USER_NAME')
+                messagebox.showinfo('등록', '\n등록이 완료 되었습니다.')
+                return True
+            else:
+                messagebox.showinfo('등록', '\n등록 취소 되었습니다.')
         if (self.data['USER_PHONE'] == phonenum).any():
             errshow = messagebox.showerror('ERR','\n등록되어 있는 회원입니다.')
         elif(list[0] == ''):
@@ -243,24 +271,35 @@ class user_dataframe:
         elif(list[2] == ''):
             messagebox.showerror('ERR', '\n전화번호가 입력되지 않았습니다.')
         elif(phonenum[3] != '-'):
-            if(phonenum[8] != '-' ):
-                messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(phonenum[8] != '-'):
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(len(list[2]) != 13):
+            messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(len(birth) != 10):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
         elif(birth[4] != '-'):
             if(birth[7] != '-'):
                 messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
-        elif(len(birth) != 10):
-            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
-        elif(len(birth) == 10):
-                checkdays(birth)
+        elif(birth[5:7] in day31):
+                if((int(birth[8:10]) > 31) or (int(birth[8:10]) < 1)):
+                    messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+                else:
+                    do_the_add()
+        elif(birth[5:7] in day30):
+                if((int(birth[8:10]) > 30) or (int(birth[8:10]) < 1)):
+                    messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+                else:
+                    do_the_add()
+        elif(birth[5:7] == '02'):
+                if((int(birth[8:10])) > 28 or (int(birth[8:10]) < 1)):
+                    messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+                else:
+                    do_the_add()
+        elif(birth[5:7] not in dayall):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
         else:
-            ask = messagebox.askquestion('등록', '\n정말 등록하시겠습니까?')
-            if ask == 'yes':
-                self.data = concat([self.data, adduser])
-                self.data.sort_values('USER_NAME')
-                messagebox.showinfo('등록', '\n등록이 완료 되었습니다.')
-                return True
-            else:
-                messagebox.showinfo('등록', '\n등록 취소 되었습니다.')
+            do_the_add()
         
         
     #선택한 회원의 탈퇴시 실행할 함수        
