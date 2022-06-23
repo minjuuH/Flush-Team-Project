@@ -442,9 +442,6 @@ class new_window:
             self.info_list(bt_text, bt_buttonlambda = command_def, font_size = 15, choice= check_choice, list = userlist, uc=uc)
 
     #등록/수정/정보 화면 설정[도서/회원] showimage = 사진 주소(파일 경로)
-<<<<<<< HEAD
-    
-=======
     def input_set(self, t, open=True, showimage = '사진등록', book_image=None):
         txt = Label(self.base_frame, text=t, font=('돋움', 20, 'bold'))
         txt.pack(anchor=NW, padx=10, pady=5)
@@ -519,14 +516,43 @@ class new_window:
             if open:
                 pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13), command=select_image)
                 pic_bt.pack(fill=X, padx=30)
-            
-            
-            
->>>>>>> 2f8cb47f884e72a92d5e5e612ccd3b0341f35f08
-        
+                
         #빈레이블로 사용하지 않을 부분 채워주기
         x_label = Label(self.Base_Top, height=1, bg='white')
-        x_label.grid(row=0, column=1)
+        x_label.grid(row=0, column=1) 
+        
+    def uinput_set(self, t, open=True, showimage = '사진등록'):
+        txt = Label(self.base_frame, text=t, font=('돋움', 20, 'bold'))
+        txt.pack(anchor=NW, padx=10, pady=5)
+        self.Base = Frame(self.base_frame, relief='solid', bg='white', bd=2)
+        self.Base.pack(fill=BOTH, pady=10, expand=True)
+        #위젯 배치에 편리성을 더하기 위해 상단부와 하단부를 나눠줌
+        self.Base_Top = Label(self.Base, bg='white', height=60)
+        self.Base_Top.pack(fill=X, side=TOP, anchor=N)
+        self.Base_Bottom = Frame(self.Base, bg='white', height=60)
+        self.Base_Bottom.pack(fill=X, side=TOP, anchor=N)
+
+        #사진 입력 부분
+        pic_base = Label(self.Base_Top, bg='white')
+        pic_base.grid(row=0, column=0, rowspan=20)
+        pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
+        pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
+        pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
+        self.pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
+        self.pic.pack(fill= 'both', expand=True)
+        if (showimage != '사진등록'):
+            if(showimage != None):
+                try:
+                    image = Image.open(showimage)
+                    image = image.resize((180, 220), Image.ANTIALIAS)
+                    picture = ImageTk.PhotoImage(image)
+                    self.pic.configure(image=picture)
+                    self.pic.image = picture
+                except:
+                    self.pic.configure(text='불러오기 실패')
+        if open:
+            pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
+            pic_bt.pack(fill=X, padx=30)
         
     #입력칸 생성[도서/회원] <- 원본
     def entry_set(self, t, r, re_choice=False, ol=False, form=False):
@@ -631,11 +657,14 @@ class new_window:
             def search():
                 uimage = askopenfilename(filetypes=(("모든 파일", "*.*"), ("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
                 input.set(uimage)
-                image = Image.open(uimage)
-                image = image.resize((180, 220), Image.ANTIALIAS)
-                picture = ImageTk.PhotoImage(image)
-                self.pic.configure(image=picture)
-                self.pic.image = picture
+                try:
+                    image = Image.open(uimage)
+                    image = image.resize((180, 220), Image.ANTIALIAS)
+                    picture = ImageTk.PhotoImage(image)
+                    self.pic.configure(image=picture)
+                    self.pic.image = picture
+                except:
+                    self.pic.configure(text='불러오기 실패')
             pic_button = Button(self.Base_Top, text='사진찾기', font=('돋움', 13), command = search)
             pic_button.grid(row=r, column=5)
         return entry
