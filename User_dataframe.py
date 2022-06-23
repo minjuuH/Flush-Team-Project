@@ -1,4 +1,5 @@
 from email import message
+from re import A
 from tkinter import *
 from tkinter import messagebox
 from pandas import *
@@ -6,7 +7,21 @@ from datetime import date
 import User_View as uv
 from UI_Class import *
 from numpy import *
-
+def checkdays(day):
+        day31 = ['01', '03', '05', '07', '08', '10', '12']
+        day30 = ['04', '06', '09', '11']
+        if (day[5:7] in day31):
+            if(int(day[8:10]) > 31 and int(day[8:10]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(day[5:7] in day30):
+            if(int(day[8:10]) > 30 and int(day[8:10]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(day[5:7] == '02'):
+            if(int(day[8:10]) > 28 and int(day[8:10]) < 1):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        else:
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+            
 class user_dataframe:
     #파일 불러옴
     def __init__(self):
@@ -118,7 +133,6 @@ class user_dataframe:
             messagebox.showerror('중복확인','\n중복되는 전화번호 입니다.')
         else:
             messagebox.showinfo('중복확인', '\n중복되지 않습니다.')
-                
     #회원목록에서 선택 수정할 경우의 함수 (수정할 회원의 USER_PHONE 값을 넘겨받아 진행)
     def modidata(self, phone, list):
         if (self.data['USER_PHONE']!=phone).all():
@@ -126,6 +140,13 @@ class user_dataframe:
         elif(list[2][3] != '-'):
             if(list[2][8] != '-' ):
                 messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(list[1][4] != '-'):
+            if([1][7] != '-'):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(len(list[1]) != 10):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        if(len(list[1]) == 10):
+                checkdays(list[1])
         elif(list[0] == ''):
             if(list[1] == ''):
                 if(list[2] == ''):
@@ -154,6 +175,8 @@ class user_dataframe:
             image = list[5]
             if image == '':
                 image = '사진등록'
+            if mail == '':
+                image = '이메일 없음'
             modivalue = [name, birth, phonenum, sex, mail, image]
             column_name = ['USER_NAME', 'USER_BIRTH', 'USER_PHONE', 'USER_SEX', 'USER_MAIL', 'USER_IMAGE']
             if (self.data['USER_PHONE'] == phonenum).any():
@@ -222,6 +245,13 @@ class user_dataframe:
         elif(phonenum[3] != '-'):
             if(phonenum[8] != '-' ):
                 messagebox.showerror('ERR', '\n알맞은 전화번호\n양식이 아닙니다.')
+        elif(birth[4] != '-'):
+            if(birth[7] != '-'):
+                messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(len(birth) != 10):
+            messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
+        elif(len(birth) == 10):
+                checkdays(birth)
         else:
             ask = messagebox.askquestion('등록', '\n정말 등록하시겠습니까?')
             if ask == 'yes':
