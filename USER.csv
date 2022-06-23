@@ -1,1 +1,4 @@
 USER_NAME,USER_BIRTH,USER_PHONE,USER_SEX,USER_MAIL,USER_IMAGE,USER_RENT_CNT,USER_QUIT_DATE,USER_RENT_ALW,USER_WARN
+이재하,1987-02-28,017-2890-4267,True,theKing2Hearts@lypos.com,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/02_변경내용/user02ee.jpg,0,,,
+주하은,1997-12-31,016-1890-1920,False,jooding@yahuo.co.kr,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/01_신규등록내용/user01.jpeg,0,,,
+황동주,1992-02-28,019-1891-4885,False,djhwang@corea.cr,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/01_신규등록내용/user02.jpg,0,,,

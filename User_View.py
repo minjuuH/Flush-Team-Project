@@ -91,7 +91,7 @@ def reset_user(window, phone, uc=None):
     ask = user.resetremove(phone)
     user.tocsv()
     if ask:
-        userwindow(window, uc)
+        del_userwindow(window, uc)
 
 #회원 상세정보창
 def userwindowinfo(window, userphone, uc=None, Quser=False):
@@ -105,7 +105,7 @@ def userwindowinfo(window, userphone, uc=None, Quser=False):
     window.title('회원 정보')
     u_new_win.Change_Frame('회원 정보')
 
-    u_new_win.input_set('회원 정보', 0, showimage = showlist[5])
+    u_new_win.uinput_set('회원 정보', 0, showimage = showlist[5])
     u_new_win.info_output('이름', 1, showlist[0])
     u_new_win.info_output('생년월일', 2, showlist[1])
     u_new_win.info_output('전화번호', 3, showlist[2])
@@ -172,7 +172,7 @@ def userwindowmodi(window, userphone, uc=None):
 
     window.title('회원 수정')
     u_new_win.Change_Frame('회원 수정')
-    u_new_win.input_set('회원 수정',0 , showimage= modiuserinfo[5])
+    u_new_win.uinput_set('회원 수정',0 , showimage= modiuserinfo[5])
     nameentry = u_new_win.u_entry_set('이름', 1, True, modiuserinfo[0])
     birthentry = u_new_win.u_entry_set('생년월일', 2, True, modiuserinfo[1], form=1)
     phoneentry = u_new_win.u_entry_set('전화번호', 3, True, modiuserinfo[2], True)
@@ -198,7 +198,7 @@ def userwindowadd(window, uc=None):
     window.title('회원 등록')
     u_new_win.Change_Frame('회원 등록')
 
-    u_new_win.input_set('회원 등록', 0)
+    u_new_win.uinput_set('회원 등록', 0)
     nameentry = u_new_win.u_entry_set('이름', 1)
     birthentry = u_new_win.u_entry_set('생년월일', 2, form=1)
     phoneentry = u_new_win.u_entry_set('전화번호', 3, ol=1)
