@@ -583,8 +583,10 @@ class new_window:
         #t = 칸 제목, show = 데이터 정보
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
         txt.grid(row=r, column=1, sticky=W)
+        if type(show)==str and len(show)>28:
+            show = show[:28]+'\n'+show[28:]
         if show != None:
-            info = Label(self.Base_Top, text=show, font=('돋움', 15), bg='white', width=55, anchor=W)
+            info = Label(self.Base_Top, text=show, font=('돋움', 15), bg='white', width=55, anchor=W, justify=LEFT)
         else:
             info = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white', width=55, anchor=W)      #   <-원본 
         info.grid(row=r, column=2, padx=10, ipady=3, columnspan=3)
@@ -593,14 +595,13 @@ class new_window:
     def book_ex(self, re_choice=False, bf_data=None, op_choice=False):
         info_label = Label(self.Base_Bottom, text='도서 설명', font=('돋움', 15), bg='white')
         info_label.pack(anchor=NW, padx=30, pady=10)
-        entry = Entry(self.Base_Bottom, width=100, font=('돋움', 13), relief='solid', bd=1)
+        entry = Text(self.Base_Bottom, height=8, font=('돋움', 13), relief='solid', bd=1, spacing1=3, spacing2=3, spacing3=3, padx=10)
         
         if re_choice:    # 도서 수정데이터 저장
-            entry.insert(0, bf_data) 
-
+            entry.insert(1.0, bf_data) 
         if op_choice:
             entry.config(state=DISABLED)
-        entry.pack(fill=X, padx=30, ipady=70)
+        entry.pack(fill=X, padx=30, expand=True)
         return entry
 
 
