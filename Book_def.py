@@ -114,19 +114,20 @@ def createNewWindow_book_r(window, uc=None):
     book_new_win.Change_Frame('도서 등록')
 
     def book_add() :
-        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end')]
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end'), image.get()]
         ask = book_class.Book_in(in_data=in_data)
         book_class.tocsv()
         if ask:
             creaNewWindow_book_info(window, in_data[3], uc)
 
-    book_new_win.input_set('도서 등록')
+    book_new_win.input_set('도서 등록', book_image='use')
     title = book_new_win.book_entry_set('제목', 1)
     author = book_new_win.book_entry_set('저자', 2)
     pub = book_new_win.book_entry_set('출판사', 3)
     isbn = book_new_win.book_entry_set('ISBN', 4, ol=1)
     price = book_new_win.book_entry_set('가격', 6)
     link = book_new_win.book_entry_set('관련링크', 7)
+    image = book_new_win.book_entry_set('사진주소', 8, pic=True)
     book_new_win.under_button('등록', book_new_win.base_frame, bt2_def=book_add, bt3_def=lambda : main_menu(window, uc=book_new_win))
     description = book_new_win.book_ex()
 
@@ -144,7 +145,7 @@ def creaNewWindow_book_info(window, isbn, uc=None):
     window.title('도서 정보')
     book_new_win.Change_Frame('도서 정보')
 
-    book_new_win.input_set('도서 정보', 0)
+    book_new_win.input_set('도서 정보', 0, book_image=out_data[7])
     book_new_win.info_output('제목', 1, out_data[1])
     book_new_win.info_output('저자', 2, out_data[2])
     book_new_win.info_output('출판사', 3, out_data[3])
@@ -168,7 +169,7 @@ def creaNewWindow_book_info_re(window, ISBN, uc=None):
 
 
     out_data = book_class.Book_info(ISBN)
-    book_new_win.input_set('도서 수정')
+    book_new_win.input_set('도서 수정', 1, book_image=out_data[7])
     #out_data의 순서와 입력칸의 순서가 맞지 않아 제대로 연결되게끔 수정
     title = book_new_win.book_entry_set('제목', 1, 1, text_data = out_data[1])
     author = book_new_win.book_entry_set('저자', 2, 1, text_data = out_data[2])
@@ -176,10 +177,11 @@ def creaNewWindow_book_info_re(window, ISBN, uc=None):
     isbn = book_new_win.book_entry_set('ISBN', 4, 1, 1, text_data = out_data[0], ISBN=ISBN)
     price = book_new_win.book_entry_set('가격', 6, 1, text_data = out_data[4])
     link = book_new_win.book_entry_set('관련링크', 7, 1, text_data = out_data[5])
+    image = book_new_win.book_entry_set('도서사진', 8, 1, pic=True, text_data = out_data[7])
     description=book_new_win.book_ex(1, out_data[6])
 
     def modi_clear():   #완료 버튼 커멘드로 연결할 함수
-        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end')]
+        in_data = [title.get(), author.get(), pub.get(), isbn.get(), price.get(), link.get(), description.get(1.0, 'end'), image.get()]
         # print(in_data)
         ask = book_class.Book_modi(check_isbn=ISBN, modi_data=in_data)
         book_class.tocsv()
@@ -199,7 +201,7 @@ def creaNewWindow_rebook_info(window, out_data=[], uc=None):
     window.title('도서 정보')
     book_new_win.Change_Frame('도서 정보')
     print(out_data)
-    book_new_win.input_set('도서 정보', 0)
+    book_new_win.input_set('도서 정보', 0, out_data[7])
     book_new_win.info_output('제목', 1, out_data[0])
     book_new_win.info_output('저자', 2, out_data[1])
     book_new_win.info_output('출판사', 3, out_data[2])

@@ -442,7 +442,7 @@ class new_window:
             self.info_list(bt_text, bt_buttonlambda = command_def, font_size = 15, choice= check_choice, list = userlist, uc=uc)
 
     #등록/수정/정보 화면 설정[도서/회원] showimage = 사진 주소(파일 경로)
-    def input_set(self, t, open=True, showimage = '사진등록'):
+    def input_set(self, t, open=True, showimage = '사진등록', book_image=None):
         txt = Label(self.base_frame, text=t, font=('돋움', 20, 'bold'))
         txt.pack(anchor=NW, padx=10, pady=5)
         self.Base = Frame(self.base_frame, relief='solid', bg='white', bd=2)
@@ -453,22 +453,69 @@ class new_window:
         self.Base_Bottom = Frame(self.Base, bg='white', height=60)
         self.Base_Bottom.pack(fill=X, side=TOP, anchor=N)
 
-        #사진 입력 부분
-        pic_base = Label(self.Base_Top, bg='white')
-        pic_base.grid(row=0, column=0, rowspan=20)
-        pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
-        pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
-        pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
-        pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
-        pic.pack(fill= 'both', expand=True)
-        if (showimage != '사진등록'):
-            if(showimage != None):
-                picture = ImageTk.PhotoImage(file = showimage)
-                pic.configure(image=picture)
-                pic.image = picture
-        if open:
-            pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
-            pic_bt.pack(fill=X, padx=30)
+        if book_image==None:
+            #사진 입력 부분
+            pic_base = Label(self.Base_Top, bg='white')
+            pic_base.grid(row=0, column=0, rowspan=20)
+            pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
+            pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
+            pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
+            pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
+            pic.pack(fill= 'both', expand=True)
+            if (showimage != '사진등록'):
+                if(showimage != None):
+                    picture = ImageTk.PhotoImage(file = showimage)
+                    pic.configure(image=picture)
+                    pic.image = picture
+            if open:
+                pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13))
+                pic_bt.pack(fill=X, padx=30)
+
+
+        elif book_image == 'use':       # 사진등록
+
+            pic_base = Label(self.Base_Top, bg='white')
+            pic_base.grid(row=0, column=0, rowspan=20)
+            pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
+            pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
+            pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
+            pic = Label(pic_frame, text='사진등록', font=('돋움', 15))
+            pic.pack(fill= 'both', expand=True)
+
+            def select_image():
+                filename = askopenfilename(parent=pic, filetypes=(('모든 파일', '*.*'), ('GIF 파일', '*.gif')))
+                photo = ImageTk.PhotoImage(file = filename)
+                pic.configure(image=photo)
+                pic.image = photo
+                messagebox.showinfo('도서관리프로그램', '선택된 사진과 동일한 사진의 주소를 입력하세요.')
+
+            if open:
+                pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13), command=select_image)
+                pic_bt.pack(fill=X, padx=30)
+
+        else:               # 사진 띄우기 - 등록 후 상세정보 창
+
+            pic_base = Label(self.Base_Top, bg='white')
+            pic_base.grid(row=0, column=0, rowspan=20)
+            pic_frame = Frame(pic_base, width=180, height=220, relief='solid', bd=1)
+            pic_frame.pack(anchor=NW, padx=30, pady=30, expand=True, side=TOP)
+            pic_frame.propagate(0)  #frame 크기를 고정시켜 줌
+            pic = Label(pic_frame, text='사진 등록', font=('돋움', 15))
+            pic.pack(fill= 'both', expand=True)
+            photo = ImageTk.PhotoImage(file=book_image)
+            pic.configure(image=photo)
+            pic.image = photo
+
+            def select_image():
+                filename = askopenfilename(parent=pic, filetypes=(('모든 파일', '*.*'), ('GIF 파일', '*.gif')))
+                photo = ImageTk.PhotoImage(file = filename)
+                pic.configure(image=photo)
+                pic.image = photo
+                messagebox.showinfo('도서관리프로그램', '선택된 사진과 동일한 사진의 주소를 입력하세요.')
+                
+            if open:
+                pic_bt = Button(pic_base, text='사진 선택', font=('돋움', 13), command=select_image)
+                pic_bt.pack(fill=X, padx=30)
             
             
             
@@ -500,7 +547,7 @@ class new_window:
             check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
      
          #입력칸 생성[도서/회원]
-    def book_entry_set(self, t, r, re_choice=False, ol=False, text_data=None, ISBN=None):
+    def book_entry_set(self, t, r, re_choice=False, ol=False, pic=False, text_data=None, ISBN=None):
         book_class = bc.Book_DataFrame()
         book_class.readcsv()
         txt = Label(self.Base_Top, text=t, font=('돋움', 15), bg='white')
@@ -531,12 +578,17 @@ class new_window:
                     
                     else:
                         book_class.Check_reisbn(ISBN, isbn)
-            
 
             self.overlap_bt = Button(self.Base_Top, text='중복확인', font=('돋움', 13), command=com_isbn)
             self.overlap_bt.grid(row=r, column=5)
-            # self.check_overlap = Label(self.Base_Top, text='중복확인을 위한 레이블입니다.', fg='blue', font=('돋움', 13), bg='white')
-            # self.check_overlap.grid(row=r+1, column=2, sticky=W, columnspan=2)
+
+        if pic==True:
+            def search():
+                image = askopenfilename(filetypes=(("모든 파일", "*.*"), ("GIF 파일", "*.gif"), ("JPG 파일", "*.jpg"),("PNG 파일", "*.png")))
+                get_data.set(image)
+            pic_button = Button(self.Base_Top, text='주소찾기', font=('돋움', 13), command = search)
+            pic_button.grid(row=r, column=5)
+
         return entry
 
     #입력칸 생성[회원]
