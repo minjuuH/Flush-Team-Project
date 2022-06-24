@@ -1,1 +1,5 @@
 USER_NAME,USER_BIRTH,USER_PHONE,USER_SEX,USER_MAIL,USER_IMAGE,USER_RENT_CNT,USER_QUIT_DATE,USER_RENT_ALW,USER_WARN
+김택길,1999-08-12,010-3227-8564,True,이메일 없음,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/01_신규등록내용/user03.jpg,0,2022-06-24,,
+주재하,1987-01-13,017-9890-4267,True,theKing2Hearts@lypos.com,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/02_변경내용/user02ee.jpg,0,,,
+주하은,2000-02-28,016-1890-1920,False,jjooding@yahuo.co.kr,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/01_신규등록내용/user01.jpeg,0,,,
+황동주,1992-02-28,019-1891-4885,True,djhwang@corea.cr,C:/Users/limm1/OneDrive/바탕 화면/테스트_02데모데이터/01_신규등록내용/user02.jpg,0,,,

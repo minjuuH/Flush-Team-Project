@@ -247,7 +247,6 @@ class user_dataframe:
                 self.data = concat([self.data, adduser])
                 self.data.sort_values('USER_NAME')
                 messagebox.showinfo('등록', '\n등록이 완료 되었습니다.')
-                return True
             else:
                 messagebox.showinfo('등록', '\n등록 취소 되었습니다.')
         if (self.data['USER_PHONE'] == phonenum).any():
@@ -286,20 +285,24 @@ class user_dataframe:
                     messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
                 else:
                     do_the_add()
+                    return True
         elif(birth[5:7] in day30):
                 if((int(birth[8:10]) > 30) or (int(birth[8:10]) < 1)):
                     messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
                 else:
                     do_the_add()
+                    return True
         elif(birth[5:7] == '02'):
                 if((int(birth[8:10])) > 28 or (int(birth[8:10]) < 1)):
                     messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
                 else:
                     do_the_add()
+                    return True
         elif(birth[5:7] not in dayall):
                 messagebox.showerror('ERR', '\n알맞은 생년월일\n양식이 아닙니다.')
         else:
             do_the_add()
+            return True
         
         
     #선택한 회원의 탈퇴시 실행할 함수        
